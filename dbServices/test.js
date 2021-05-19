@@ -6,3 +6,7 @@ const queryPost = require("./queryPost")
 // queryPost({author_id: 3}, (result) => {
 //     console.log(result)
 // })
+
+const updatePost = require("./updatePost")
+
+updatePost({_id : "60a3a3b1951e1103235c7c40"}, {body: "updateOne test"})
