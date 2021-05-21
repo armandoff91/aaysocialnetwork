@@ -8,6 +8,7 @@ function queryPost(condition, callback) {
     connect(() => {
         Post.find(condition)
         .then((result) => {
+            console.log(result)
             callback(result)
         })
         .catch((err) => {

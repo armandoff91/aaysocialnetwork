@@ -1,0 +1,1 @@
+// on page load: request from cache to load posts 

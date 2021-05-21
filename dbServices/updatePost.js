@@ -30,8 +30,8 @@ function updatePost(filter, update = {}) {
             .then(() => {
                 console.log("update done")
             })
-            .catch(() => {
-                
+            .catch((err) => {
+                console.log(err)
             })
         }
     });
