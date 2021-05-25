@@ -5,8 +5,7 @@ const connect = require("./connect")
 
 const Post = mongoose.model("Post", postSchema)
 
-function createPost(postObject) {
-
+function createPost(postObject, callback) {
     const newPost = new Post({
         title:  postObject.title,
         author_id: postObject.author_id,
@@ -25,12 +24,11 @@ function createPost(postObject) {
         .then((savedDoc) => {
             // further action: check if post is created.
             console.log("post saved")
+            mongoose.connection.close()
+            callback(savedDoc)
         })
         .catch((err) => {
             console.log(err)
-        })
-        .finally(() => {
-            mongoose.connection.close()
         })
     })
 }
