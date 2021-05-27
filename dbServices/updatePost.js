@@ -14,7 +14,7 @@ const update = {body: "No, this post is actually bad."}
 //update takes a post's object id and body
 
 
-function updatePost(filter, update = {}) {
+function updatePost(filter, update = {}, callback) {
     connect(async function() {
 
         const postCount = await Post.countDocuments(filter)
@@ -26,9 +26,10 @@ function updatePost(filter, update = {}) {
         
         console.log(postCount)
         if (postCount > 0) {
-            Post.findOneAndUpdate(filter, update)
-            .then(() => {
+            Post.findOneAndUpdate(filter, update, {new: true})
+            .then((updatedPost) => {
                 console.log("update done")
+                callback(updatedPost)
             })
             .catch((err) => {
                 console.log(err)

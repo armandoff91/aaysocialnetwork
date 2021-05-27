@@ -6,17 +6,17 @@ const Post = mongoose.model("Post", postSchema)
 
 function queryPost(condition, callback) {
     connect(() => {
-        Post.find(condition)
+        Post.find(condition.filter, condition.projection, condition.option)
         .then((result) => {
-            console.log(result)
+            console.log(`${result.length} posts found`)
             callback(result)
         })
         .catch((err) => {
             console.log(err)
         })
-        .finally(() =>
-            mongoose.connection.close() 
-        )
+        // .finally(() =>
+        //     mongoose.connection.close() 
+        // )
     })
 }
 

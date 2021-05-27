@@ -9,6 +9,24 @@ const queryPost = require("./queryPost")
 
 const updatePost = require("./updatePost")
 
-// updatePost({_id : "60a3a3b1951e1103235c7c40"}, {body: "updateOne test"})
 
-createPost({author_id: 1002, title: "test221 for createPost", body: "test11 for createPost"}, (savedDoc) => console.log(savedDoc))
+
+// queryPost({filter: {_id:"60af64bfd80b770059a53610"}}, (result) => {
+//     console.log(result)
+// })
+
+const comment = {author_id: 1002, body: "comment 1"}
+
+const update = {
+    $push: {comments: comment},
+}
+//$push: { friends: friend }
+
+
+updatePost({_id:"60af64bfd80b770059a53610"}, update, (updatedPost) => {
+    console.log(updatedPost)
+})
+
+// queryPost({filter: {_id: "60af64bfd80b770059a53610"}}, (result) => {
+//     console.log(result)
+// })

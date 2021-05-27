@@ -1,12 +1,21 @@
 const createPost = require("../dbServices/createPost")
+const queryPost = require("../dbServices/queryPost")
+const updatePost = require("../dbServices/updatePost")
 
 
 class Cache {
     constructor() {
         this.body = []
     }
-    init() {
-        
+    init(numberOfposts = 1000) {
+        queryPost({filter: {date: {$gt: Date.now() - 86400000 * 30}}, projection: null,
+        option: {
+            limit: numberOfposts, 
+            sort: {date: -1}
+        }}, 
+        (posts) => {
+            console.log(posts.length)
+        })
     }
     flush() {
         this.body = []
@@ -19,7 +28,10 @@ class Cache {
     show() {
         console.log(this.body)
     }
-    newPost(post, callback) {
+    size() {
+        return this.body.length
+    }
+    newPost(post, callback = () => {}) {
         // title, author_id, body
         createPost({title: post.title, author_id: post.author_id, body: post.body}, (savedDoc) => {
             // unshift post to cache
@@ -28,9 +40,26 @@ class Cache {
             callback(savedDoc)
         })
     }
-    query(conditions) {
+
+    newComment(postId, comment, callback = () => {}) {
+        const update = {
+            $push : {comments: {
+                author_id : comment.author_id,
+                body: comment.body,
+            }}
+        }
+        updatePost({_id: postId}, update, (updatedPost) => {
+            console.log(updatedPost.comments)
+            callback(updatedPost)
+        })
+    }
+    query(conditions, callback = () => {}) {
 
     }
 }
 
-var cache = new Cache();
+cache = new Cache()
+cache.newComment('60af64bfd80b770059a53610', {
+    author_id: 1003,
+    body: "comment 2"
+})

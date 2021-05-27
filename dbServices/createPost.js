@@ -23,8 +23,6 @@ function createPost(postObject, callback) {
         newPost.save()
         .then((savedDoc) => {
             // further action: check if post is created.
-            console.log("post saved")
-            mongoose.connection.close()
             callback(savedDoc)
         })
         .catch((err) => {
