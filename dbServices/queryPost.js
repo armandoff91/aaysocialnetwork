@@ -6,6 +6,7 @@ const Post = mongoose.model("Post", postSchema)
 
 function queryPost(condition, callback) {
     connect(() => {
+        console.log("db connected")
         Post.find(condition.filter, condition.projection, condition.option)
         .then((result) => {
             console.log(`${result.length} posts found`)
@@ -14,9 +15,9 @@ function queryPost(condition, callback) {
         .catch((err) => {
             console.log(err)
         })
-        // .finally(() =>
-        //     mongoose.connection.close() 
-        // )
+        .finally(() =>
+            mongoose.connection.close() 
+        )
     })
 }
 

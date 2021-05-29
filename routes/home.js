@@ -4,9 +4,12 @@ const expressHandlebars = require("express-handlebars")
 const queryPost = require("../dbServices/queryPost")
 
 router
-    .route("/")
-    .get((req, res) => {
-        console.log("route reached.")
+    .route("/:postId")
+
+    // get 10 posts from cache
+    .get((req, res, params) => {
+        console.log("get /home reached.")
+        console.log(req.params.postId)
 })
 
 // when receive get request, check cache length

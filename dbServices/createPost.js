@@ -6,9 +6,10 @@ const connect = require("./connect")
 const Post = mongoose.model("Post", postSchema)
 
 function createPost(postObject, callback) {
+    console.log("db createPost called")
     const newPost = new Post({
         title:  postObject.title,
-        author_id: postObject.author_id,
+        author_id: postObject.authorId,
         body:   postObject.body,
         comments: [],
         date: Date.now() ,
@@ -20,6 +21,7 @@ function createPost(postObject, callback) {
     })
     
     connect(() => {
+        console.log("db connected")
         newPost.save()
         .then((savedDoc) => {
             // further action: check if post is created.
@@ -28,6 +30,9 @@ function createPost(postObject, callback) {
         .catch((err) => {
             console.log(err)
         })
+        .finally(() =>
+            mongoose.connection.close() 
+        )
     })
 }
 

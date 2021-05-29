@@ -32,8 +32,9 @@ class Cache {
         return this.body.length
     }
     newPost(post, callback = () => {}) {
+        console.log("cache accepting new post....")
         // title, author_id, body
-        createPost({title: post.title, author_id: post.author_id, body: post.body}, (savedDoc) => {
+        createPost({title: post.title, authorId: post.authorId, body: post.body}, (savedDoc) => {
             // unshift post to cache
             this.body.unshift(savedDoc)
             // 
@@ -44,7 +45,7 @@ class Cache {
     newComment(postId, comment, callback = () => {}) {
         const update = {
             $push : {comments: {
-                author_id : comment.author_id,
+                authorId : comment.authorId,
                 body: comment.body,
             }}
         }
@@ -58,8 +59,4 @@ class Cache {
     }
 }
 
-cache = new Cache()
-cache.newComment('60af64bfd80b770059a53610', {
-    author_id: 1003,
-    body: "comment 2"
-})
+module.exports = Cache
