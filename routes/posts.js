@@ -38,14 +38,39 @@ router
             authorId: req.body.userId,
             title: req.body.title,
             body: req.body.body
-        }
+        }           
         cache.newPost(newPost,(savedPost) => {
             console.log("post saved")
             res.send(savedPost + "")
         })
 })
 
+router
+    .route("/newComment")
+    .post((req, res) => {
+        console.log("new comment request received")
+        console.log(req.body)
+        const newComment =  {
+            authorId: req.body.userId,
+            postId: req.body.postId,
+            body: req.body.body
+        }           
+        cache.newComment(newComment,(updatedPost) => {
+            console.log("newComment saved")
+            res.send(updatedPost + "")
+        })
+})
 
+router
+    .route("/deletePost")
+    .post((req, res) => {
+        console.log("delete post request received")
+        console.log(req.body)
+        cache.deletePost(req.body.postId, (deletedPost) => {
+            res.send(`${deletedPost._id} deleted`)
+        })
+})
+    
 
 // when receive get request, check cache length
 // if cache length = 0, grab post from db

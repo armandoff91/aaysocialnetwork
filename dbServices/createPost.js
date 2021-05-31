@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const postSchema = require("./schemas/postSchema")
-const connect = require("./connect")
 
 
 const Post = mongoose.model("Post", postSchema)
@@ -20,20 +19,14 @@ function createPost(postObject, callback) {
         }
     })
     
-    connect(() => {
-        console.log("db connected")
-        newPost.save()
+    newPost.save()
         .then((savedDoc) => {
             // further action: check if post is created.
             callback(savedDoc)
         })
         .catch((err) => {
             console.log(err)
-        })
-        .finally(() =>
-            mongoose.connection.close() 
-        )
-    })
+    })    
 }
 
 module.exports = createPost;

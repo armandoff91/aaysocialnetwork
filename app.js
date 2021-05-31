@@ -5,6 +5,7 @@ const port = 3000
 const auth = require("./routes/auth")
 const home = require("./routes/home")
 const posts = require("./routes/posts")
+const connect = require("./dbServices/connect")
 
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
@@ -16,6 +17,9 @@ var textParser = bodyParser.text()
 
 var Cache = require("./services/cache")
 
+connect(() => {
+    console.log("db connected, ready to accept commands")
+})
 
 app.engine('handlebars', expressHandlebars());
 app.set('view engine', 'handlebars')
