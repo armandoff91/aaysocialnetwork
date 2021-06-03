@@ -70,6 +70,36 @@ router
             res.send(`${deletedPost._id} deleted`)
         })
 })
+
+router
+    .route("/deleteComment")
+    .post((req, res) => {
+        console.log("delete comment request received")
+        console.log(req.body)
+        cache.deleteComment(req.body.CommentId, (updatedPost) => {
+            res.send(updatedPost + "")
+        })
+})
+
+router
+    .route("/updatePost")
+    .post((req, res) => {
+        console.log("update post request received.")
+        console.log(req.body)
+        cache.updatePost(req.body, (updatedPost) => {
+            res.send(updatedPost + "")
+        })
+})
+
+router
+    .route("/updateComment")
+    .post((req, res) => {
+        console.log("update Comment request received.")
+        console.log(req.body)
+        cache.updateComment(req.body, (updatedComment) => {
+            res.send(updatedComment + "")
+        })
+})
     
 
 // when receive get request, check cache length

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
-const postSchema = require("./schemas/postSchema")
+const schemas = require("./schemas/schemas")
+const postSchema = schemas.postSchema
 
 
 const Post = mongoose.model("Post", postSchema)
@@ -10,13 +11,6 @@ function createPost(postObject, callback) {
         title:  postObject.title,
         author_id: postObject.authorId,
         body:   postObject.body,
-        comments: [],
-        date: Date.now() ,
-        hidden: false,
-        meta: {
-          votes: 0,
-          favs:  0
-        }
     })
     
     newPost.save()

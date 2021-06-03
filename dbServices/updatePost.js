@@ -1,4 +1,5 @@
-const postSchema = require("./schemas/postSchema")
+const schemas = require("./schemas/schemas")
+const postSchema = schemas.postSchema
 const mongoose = require("mongoose")
 
 

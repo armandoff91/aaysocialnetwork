@@ -1,8 +1,8 @@
 const createPost = require("../dbServices/createPost")
 const queryPost = require("../dbServices/queryPost")
-const { post } = require("../dbServices/schemas/postSchema")
 const updatePost = require("../dbServices/updatePost")
 const deletePost = require("../dbServices/deletePost")
+const updateComment = require("../dbServices/updateComment")
 
 
 class Cache {
@@ -69,12 +69,9 @@ class Cache {
         })
     }
 
-    updatePost(post, callback = () => {}) {
+    deleteComment(commentId, callback = () => {}) {
         const update = {
-            $push : {comments: {
-                authorId : comment.authorId,
-                body: comment.body,
-            }}
+            $pop : {_id: { $eq: commentId}}
         }
         updatePost({_id: comment.postId}, update, (updatedPost) => {
             console.log(updatedPost.comments)
@@ -91,8 +88,42 @@ class Cache {
         })
     }
 
-    updateComment(post, callback = () => {}) {
+    updatePost(post, callback = () => {}) {
+        const update = {
+            body: post.body,
+            lastUpdate: Date.now()
+        }
+        updatePost({_id: post.postId}, update, (updatedPost) => {
+            for (var i in this.body) {
+                if(this.body[i]._id == post.postId) {
+                    console.log(`${post.postId} deleted from cache`)
+                    this.body.splice(i, 1)
+                    break
+                }
+                this.body.unshift(updatedPost)
+                console.log(this.body[0])
+            }
+            callback(updatedPost)
+        })
+    }
 
+    updateComment(comment, callback) {
+        const update = {
+            body: comment.body
+        }
+        updateComment({_id: comment.commentId}, update, (updatedComment) => {
+            console.log(updateComment)
+            // for (var i in this.body) {
+            //     if(this.body[i]._id == comment.postId) {
+            //         console.log(`${comment.postId} deleted from cache`)
+            //         this.body.splice(i, 1)
+            //         break
+            //     }
+            //     this.body.unshift(updatedPost)
+            //     console.log(this.body[0])
+            // }
+            callback(updatedComment)
+        })
     }
 
     deletePost(postId, callback = () => {}) {
