@@ -11,6 +11,8 @@ function createPost(postObject, callback) {
         title:  postObject.title,
         author_id: postObject.authorId,
         body:   postObject.body,
+        date: Date.now(),
+        lastUpdate: Date.now()
     })
     
     newPost.save()

@@ -2,6 +2,7 @@ const createPost = require("../dbServices/createPost")
 const queryPost = require("../dbServices/queryPost")
 const updatePost = require("../dbServices/updatePost")
 const deletePost = require("../dbServices/deletePost")
+const createComment = require("../dbServices/createComment")
 const updateComment = require("../dbServices/updateComment")
 
 
@@ -48,23 +49,19 @@ class Cache {
     }
 
     newComment(comment, callback = () => {}) {
-        const update = {
-            $push : {comments: {
-                authorId : comment.authorId,
-                body: comment.body,
-            }}
+        const commentObject = {
+            ...comment,
+            lastUpdate: Date.now()
         }
-        updatePost({_id: comment.postId}, update, (updatedPost) => {
-            console.log(updatedPost.comments)
+        createComment(commentObject, (updatedPost) => {
             for (var i in this.body) {
-                if(this.body[i]._id == comment.postId) {
-                    console.log(`${comment.postId} deleted from cache`)
+                if (this.body[i]._id == commentObject.postId) {
                     this.body.splice(i, 1)
                     break
                 }
-                this.body.unshift(updatedPost)
-                console.log(this.body[0])
             }
+            this.body.unshift(updatedPost)
+            console.log(this.body[0])
             callback(updatedPost)
         })
     }
@@ -81,9 +78,9 @@ class Cache {
                     this.body.splice(i, 1)
                     break
                 }
-                this.body.unshift(updatedPost)
-                console.log(this.body[0])
             }
+            this.body.unshift(updatedPost)
+            console.log(this.body[0])
             callback(updatedPost)
         })
     }
@@ -109,9 +106,10 @@ class Cache {
 
     updateComment(comment, callback) {
         const update = {
+            commentId: comment.commentId,
             body: comment.body
         }
-        updateComment({_id: comment.commentId}, update, (updatedComment) => {
+        updateComment(update, (updatedComment) => {
             console.log(updateComment)
             // for (var i in this.body) {
             //     if(this.body[i]._id == comment.postId) {

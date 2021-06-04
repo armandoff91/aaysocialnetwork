@@ -17,6 +17,8 @@ var textParser = bodyParser.text()
 
 var Cache = require("./services/cache")
 
+console.log(`this is time of app.js ${Date.now()}`)
+
 connect(() => {
     console.log("db connected, ready to accept commands")
 })

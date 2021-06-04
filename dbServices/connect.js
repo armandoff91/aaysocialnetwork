@@ -12,7 +12,7 @@ function connect(callback) {
     })
     db.then(() => {
         console.log("db connected")
-        callback()
+        callback
     })
 }
 
