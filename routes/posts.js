@@ -100,6 +100,16 @@ router
             res.send(updatedComment + "")
         })
 })
+
+router
+    .route("/queryPost")
+    .post((req, res) => {
+        console.log("query post request received.")
+        console.log(req.body)
+        cache.query(req.body, (result) => {
+            res.send(result + "")
+        })
+})
     
 
 // when receive get request, check cache length

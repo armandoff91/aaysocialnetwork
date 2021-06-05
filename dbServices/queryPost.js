@@ -4,10 +4,10 @@ const postSchema = schemas.postSchema
 
 const Post = mongoose.model("Post", postSchema)
 
-function queryPost(condition, callback) {
+function queryPost(req, callback) {
     
 
-    Post.find(condition.filter, condition.projection, condition.option)
+    Post.find(req.filter, req.projection, req.option)
     .then((result) => {
         console.log(`queryPost : ${result.length} posts found`)
         callback(result)

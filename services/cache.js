@@ -1,10 +1,14 @@
+const mongoose = require("mongoose")
+const mongodb = require("mongodb")
 const createPost = require("../dbServices/createPost")
 const queryPost = require("../dbServices/queryPost")
 const updatePost = require("../dbServices/updatePost")
 const deletePost = require("../dbServices/deletePost")
 const createComment = require("../dbServices/createComment")
 const updateComment = require("../dbServices/updateComment")
+const schemas = require("../dbServices/schemas/schemas")
 
+const Post = mongoose.model("Post", schemas.postSchema)
 
 class Cache {
     constructor() {
@@ -105,22 +109,10 @@ class Cache {
     }
 
     updateComment(comment, callback) {
-        const update = {
-            commentId: comment.commentId,
-            body: comment.body
-        }
-        updateComment(update, (updatedComment) => {
-            console.log(updateComment)
-            // for (var i in this.body) {
-            //     if(this.body[i]._id == comment.postId) {
-            //         console.log(`${comment.postId} deleted from cache`)
-            //         this.body.splice(i, 1)
-            //         break
-            //     }
-            //     this.body.unshift(updatedPost)
-            //     console.log(this.body[0])
-            // }
-            callback(updatedComment)
+
+        updateComment(comment, (updatedPost) => {
+            this.renewCache(comment.postId, updatePost)
+            callback(updatedPost)
         })
     }
 
@@ -141,8 +133,49 @@ class Cache {
 
     }
 
-    query(conditions, callback = () => {}) {
+    query(req, callback = () => {}) {
+        console.log(this.inCache(req.postId))
+        if (this.inCache(req.postId) != false) {
+            console.log(`post ${req.postId} found in cache`)
+            callback(this.inCache(req.postId))
+        } else {
+            const query = {
+                filter : {
+                    _id: req.postId
+                },
+                projection : {},
+                option: {}
+            }
+            queryPost(query, (result)=> {
+                this.renewCache(req.postId, result)
+                callback(result)
+        })}
+    }
 
+    renewCache(postId, replacement) {
+        for (var i in this.body) {
+            if(this.body[i]._id == postId) {
+                this.body.splice(i, 1, replacement)
+                console.log(`post ${postId} replaced with new version.`)
+                break
+            }
+            if (i == this.body.length - 1) {
+                this.body.unshift(replacement)
+                console.log(`post ${postId} not in cache, unshifted new post to cache`)
+            }
+        }
+        // console.log(this.body[0])
+    }
+
+    inCache(postId) {
+        console.log(postId)
+        for (var i in this.body) {
+            if (this.body[i]._id.toString() === postId) {
+                return this.body[i]
+            }
+        }
+        console.log(this.body.length)
+        return false
     }
 }
 
