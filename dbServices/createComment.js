@@ -5,7 +5,6 @@ const commentSchema = schemas.commentSchema
 
 const Post = mongoose.model("Post", postSchema)
 const Comment = mongoose.model("Comment", commentSchema)
-const connect = require("./connect")
 
 function createComment (commentObject, callback) {
     const newComment = new Comment({
@@ -27,14 +26,5 @@ function createComment (commentObject, callback) {
         callback(updatedPost)
     })
 }
-
-// connect(createComment({
-//     postId: "60a3a62225f2e20367aa2350",
-//     authorId: 1001,
-//     body: "4th June test for createComment",
-//     lastUpdate: Date.now()
-// }, (updatedPost) => {
-//     console.log(updatedPost)
-// }))
 
 module.exports = createComment

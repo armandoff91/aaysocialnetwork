@@ -1,7 +1,9 @@
 const mongoose = require("mongoose")
 
 const queryPost = require("../dbServices/queryPost")
+const createPost = require("../dbServices/createPost")
 const schemas = require("../dbServices/schemas/schemas")
+const createComment = require("../dbServices/createComment")
 
 const Post = mongoose.model("Post", schemas.postSchema)
 
@@ -45,6 +47,22 @@ class Cache {
                 callback(this.body[postId])
             })
         }
+    }
+
+    createPost(post, callback) {
+        console.log("createPost called")
+        createPost({title: post.title, authorId: post.authorId, body: post.body}, (savedDoc) => {
+            this.body[savedDoc.id] = savedDoc
+            callback(savedDoc)
+        })
+    }
+    
+    createComment(comment, callback) {
+        console.log("cache.createComment called")
+        createComment(comment, (updatedPost) => {
+            this.body[updatedPost.id] = updatedPost
+            callback(updatedPost)
+        })
     }
 }
 

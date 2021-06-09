@@ -1,17 +1,17 @@
 const queryPost = require("./dbServices/queryPost")
 const connect = require("./dbServices/connect")
 const Cache = require("./services/cache2.js")
+const createReply = require("./dbServices/createReply")
 
 
 
-connect(
-    queryPost({filter : {_id: "60a3a62225f2e20367aa2350"}}, (numberOfPosts, posts) => {
-        // console.log(result[0].id === "60a3a62225f2e20367aa2350") // true
-        const cache = new Cache()
-        cache.pushMany(posts)
-        console.log("*******"+ cache.isInCache("60a3a62225f2e20367aa2350"))
-        cache.findOne("60a3a62225f2e20367aa2350", (post) => {
-            console.log(post.id)
-        })
+connect(() => {
+    createReply({
+        authorId: 1001,
+        postId: "60c0b71237bbd8009b088cfc",
+        commentId: "60c0b94353256000b19e1b22",
+        body: "9th june createReply"
+    }, (updatedPost) => {
+        console.log(updatedPost)
     })
-)
+})
