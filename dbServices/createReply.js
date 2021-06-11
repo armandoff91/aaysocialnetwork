@@ -16,17 +16,19 @@ function createReply(reply, callback) {
         date: Date.now(),
         lastUpdate: Date.now()
     })
-    // you dont want to queryPost each time you add a comment, not a good practice
-    queryPost({filter: {_id: reply.postId}}, (numberOfPosts, posts) => {
-        console.log(posts[0].comments)
-        for (var i in posts[0].comments) {
-            if (posts[0].comments[i].id === reply.commentId) {
-                posts[0].comments[i].replies.push(newReply)
+    Post.findById(reply.postId, (err, post) => {
+        if (err)  {
+            console.log(err)
+            return
+        }
+        for (var i in post.comments) {
+            if (post.comments[i].id === reply.commentId) {
+                
                 break
             }
         }
         // posts[0].comments[reply.commentId].replies.push(newReply)
-        posts[0].save().then((updatedPost) => {
+        post.save().then((updatedPost) => {
             callback(updatedPost)
         }).catch((err) => {
             console.log(err)

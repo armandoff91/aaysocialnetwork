@@ -14,16 +14,15 @@ function createComment (commentObject, callback) {
         lastUpdate: Date.now()
     })
     const update = {
-        $push: {comments: newComment},
-        lastUpdate: commentObject.lastUpdate
+        $push: {comments: newComment}
     }
-    console.log(newComment)
-    Post.findByIdAndUpdate(commentObject.postId, update, {new: true}, (err, updatedPost) => {
+    Post.findByIdAndUpdate(commentObject.postId, update, {new: true}, (err, post) => {
         if (err) {
             console.log(err)
             return
         }
-        callback(updatedPost)
+        console.log(post)
+        callback(post)
     })
 }
 
