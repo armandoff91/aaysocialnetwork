@@ -21,7 +21,6 @@ function createComment (commentObject, callback) {
             console.log(err)
             return
         }
-        console.log(post)
         callback(post)
     })
 }

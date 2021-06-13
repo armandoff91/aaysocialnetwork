@@ -6,6 +6,7 @@ const schemas = require("../dbServices/schemas/schemas")
 const createComment = require("../dbServices/createComment")
 
 const Post = mongoose.model("Post", schemas.postSchema)
+const Comment = mongoose.model("Comment", schemas.commentSchema)
 
 class Cache {
     constructor() {
@@ -57,12 +58,18 @@ class Cache {
         })
     }
     
-    createComment(comment, callback) {
+    createComment(comment, post, callback = () => {}) {
         console.log("cache.createComment called")
-        createComment(comment, (updatedPost) => {
-            this.body[updatedPost.id] = updatedPost
-            callback(updatedPost)
+        const newComment = new Comment({
+            authorId: comment.authorId,
+            body: comment.body
         })
+        console.log(newComment)
+        post.comments.unshift(newComment)
+        // createComment(comment, (updatedPost) => {
+        //     this.body[updatedPost.id] = updatedPost
+        //     callback(updatedPost)
+        // })
     }
 }
 
