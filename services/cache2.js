@@ -12,6 +12,7 @@ class Cache {
     constructor() {
         console.log("cache constructed")
         this.body = {}
+        this.updateQueue = []
     }
 
     pushOne(object) {
@@ -34,6 +35,21 @@ class Cache {
         return typeof this.body[postId] != "undefined"
     }
 
+    updateDb() {
+        for(var i in this.updateQueue) {
+            this.body[this.updateQueue[i]].save().then((savedPost)=> {
+                if(savedPost === this.body[this.updateQueue[i]]) {
+                    this.updateQueue.splice(i, 1)
+                    console.log("updateQueue: " + this.updateQueue)
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }
+
+    // when updating DB: want to abandon the first .save() of the same post if the 2nd .save() is initiated
+
     findOne(postId, callback) {
         console.log("findOne called")
         if (this.isInCache(postId)) {
@@ -50,26 +66,31 @@ class Cache {
         }
     }
 
-    createPost(post, callback) {
+    createPost(post, callback = () => {}) {
         console.log("createPost called")
-        createPost({title: post.title, authorId: post.authorId, body: post.body}, (savedDoc) => {
-            this.body[savedDoc.id] = savedDoc
-            callback(savedDoc)
+        const newPost = new Post({
+            authorId: post.authorId,
+            title: post.title,
+            body: post.body,
+            date: Date.now(),
+            lastUpdate: Date.now()
         })
+        this.body[newPost.id] = newPost
+        this.updateQueue.push(newPost.id)
+        callback(newPost)
     }
     
     createComment(comment, post, callback = () => {}) {
         console.log("cache.createComment called")
         const newComment = new Comment({
             authorId: comment.authorId,
-            body: comment.body
+            body: comment.body,
+            date: Date.now(),
+            lastUpdate: Date.now()
         })
-        console.log(newComment)
         post.comments.unshift(newComment)
-        // createComment(comment, (updatedPost) => {
-        //     this.body[updatedPost.id] = updatedPost
-        //     callback(updatedPost)
-        // })
+        post.lastUpdate = Math.max(newComment.lastUpdate, post.lastUpdate)
+        this.updateQueue.push(newCommentId)
     }
 }
 

@@ -15,26 +15,16 @@ const Post = mongoose.model("Post", postSchema)
 
 async function test() {
     connect(() => {
-    const cache = new Cache()
-    queryPost({filter: {_id: "60a3a62225f2e20367aa2350"}}, (numberOfPost, doc1) =>{
-        cache.pushOne(doc1[0])
-        cache.createComment({
+        const cache = new Cache()
+        cache.createPost({
             authorId: 1001,
-            body: "13 June testing new method haha 1"
-        }, doc1[0])
-        cache.createComment({
-            authorId: 1001,
-            body: "13 June testing new method haha 2"
-        }, doc1[0])
-        cache.createComment({
-            authorId: 1001,
-            body: "13 June testing new method haha 3"
-        }, doc1[0])
-        cache.body[doc1[0].id].save().then((savedDoc) => {
-            cache.pushOne(savedDoc)
-            console.log(cache.body[savedDoc.id] === savedDoc)
-        })
-    })})
+            title: "14 June title",
+            body: "14 June"
+        }, (newPost) => {
+            console.log(newPost.id)
+            cache.updateDb()
+        })    
+    })
 }
 
 test()
