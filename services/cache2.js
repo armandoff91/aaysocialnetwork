@@ -7,12 +7,14 @@ const createComment = require("../dbServices/createComment")
 
 const Post = mongoose.model("Post", schemas.postSchema)
 const Comment = mongoose.model("Comment", schemas.commentSchema)
+const Reply = mongoose.model("Reply", schemas.replySchema)
 
 class Cache {
     constructor() {
         console.log("cache constructed")
         this.body = {}
         this.updateQueue = []
+        this.deleteQueue = []
     }
 
     pushOne(object) {
@@ -35,20 +37,66 @@ class Cache {
         return typeof this.body[postId] != "undefined"
     }
 
-    updateDb() {
+    addToUpdateQueue(postId) {
+        if (typeof postId != "string") {
+            console.log("postId is not a string, cannot add to Update Queue")
+            return
+        }
+        if (this.updateQueue.includes(postId)) {
+            console.log(`${postId} already in update queue`)
+            return
+        }
+        this.updateQueue.push(postId)
+    }
+
+    addToDeleteQueue(postId) {
+        if (typeof postId != "string") {
+            console.log("postId is not a string, cannot add to delete Queue")
+            return
+        }
+        if (this.deleteQueue.includes(postId)) {
+            console.log(`${postId} already in delete queue`)
+            return
+        }
+        this.deleteQueue.push(postId)
+        console.log(this.deleteQueue)
+    }
+
+    writeToDb() {
         for(var i in this.updateQueue) {
-            this.body[this.updateQueue[i]].save().then((savedPost)=> {
+            try {this.body[this.updateQueue[i]].save().then((savedPost)=> {
                 if(savedPost === this.body[this.updateQueue[i]]) {
                     this.updateQueue.splice(i, 1)
-                    console.log("updateQueue: " + this.updateQueue)
                 }
             }).catch((err) => {
                 console.log(err)
+            })}
+            catch (err) {
+                console.log(err)
+                this.updateQueue.splice(i, 1)
+            }
+        }
+    }
+
+    deleteFromDb() {
+        for (var i in this.deleteQueue) {
+            Post.findByIdAndDelete(this.deleteQueue[i], (err, deletedDoc) => {
+                if (err) {console.log(err)}
+                this.deleteQueue.splice(i, 1)
+                console.log(deletedDoc.id + " is removed")
             })
         }
     }
 
     // when updating DB: want to abandon the first .save() of the same post if the 2nd .save() is initiated
+    updateCycle(timeInterval = 10000) {
+        setInterval(() => {
+            this.writeToDb()
+            this.deleteFromDb()
+            console.log("updateQueue: " + this.updateQueue)
+            console.log("deleteQueue: " + this.deleteQueue)
+        }, timeInterval)
+    }
 
     findOne(postId, callback) {
         console.log("findOne called")
@@ -60,37 +108,170 @@ class Cache {
             queryPost({filter: {_id: postId}}, (numberOfPosts, posts) => {
                 if (numberOfPosts === 0) {throw "no posts found"}
                 this.pushMany(posts)
-                console.log(this.body[postId])
                 callback(this.body[postId])
             })
         }
     }
 
-    createPost(post, callback = () => {}) {
+    createPost(request, callback = () => {}) {
         console.log("createPost called")
         const newPost = new Post({
-            authorId: post.authorId,
-            title: post.title,
-            body: post.body,
+            authorId: request.authorId,
+            title: request.title,
+            body: request.body,
             date: Date.now(),
             lastUpdate: Date.now()
         })
-        this.body[newPost.id] = newPost
-        this.updateQueue.push(newPost.id)
+        this.pushOne(newPost)
+        this.addToUpdateQueue(newPost.id)
         callback(newPost)
     }
     
-    createComment(comment, post, callback = () => {}) {
+    createComment(request, callback = () => {}) {
         console.log("cache.createComment called")
-        const newComment = new Comment({
-            authorId: comment.authorId,
-            body: comment.body,
-            date: Date.now(),
-            lastUpdate: Date.now()
+        this.findOne(request.postId, () => {
+            const newComment = new Comment({
+                authorId: request.authorId,
+                body: request.body,
+                date: Date.now(),
+                lastUpdate: Date.now()
+            })
+            this.body[request.postId].comments.unshift(newComment)
+            this.body[request.postId].lastUpdate = Math.max(newComment.lastUpdate, this.body[request.postId].lastUpdate)
+            this.addToUpdateQueue(request.postId)
         })
-        post.comments.unshift(newComment)
-        post.lastUpdate = Math.max(newComment.lastUpdate, post.lastUpdate)
-        this.updateQueue.push(newCommentId)
+    }
+
+    createReply(request, callback = () => {}) {
+        console.log("cache.createReply called")
+        this.findOne(request.postId, () => {
+            const newReply = new Reply({
+                authorId: request.authorId,
+                body: request.body,
+                date: Date.now(),
+                lastUpdate: Date.now()
+            })
+            var targetPost = this.body[request.postId]
+            for (var i in this.body[request.postId].comments) {
+                if (this.body[request.postId].comments[i].id === request.commentId) {
+                    var targetComment = this.body[request.postId].comments[i]
+                    break
+                }
+            }
+            if (typeof targetComment === "undefined") {throw "no comment found, cannot create reply."}
+            targetComment.replies.unshift(newReply)
+            targetPost.lastUpdate = Math.max(newReply.lastUpdate, targetPost.lastUpdate)
+            this.addToUpdateQueue(request.postId)
+            callback(this.body[request.postId])
+        })
+    }
+
+    updatePost(request, callback = () => {}) {
+        this.findOne(request.postId, ()=> {
+            console.log("cache.updatePost called")
+            const targetPost = this.body[request.postId]
+            targetPost.body = request.body
+            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+            this.addToUpdateQueue(targetPost.id)
+            callback(targetPost)
+        })
+    }
+
+    updateComment(request, callback = () => {}) {
+        console.log("cache.updateComment called")
+        this.findOne(request.postId, ()=> {
+            var targetPost = this.body[request.postId]
+            for (var i in targetPost.comments) {
+                if (targetPost.comments[i].id === request.commentId) {
+                    var targetComment = this.body[request.postId].comments[i]
+                    break
+                }
+            }
+            if (typeof targetComment === "undefined") {throw "no comment found, cannot update comment"}
+            targetComment.body = request.body
+            targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
+            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+            this.addToUpdateQueue(targetPost.id)
+            callback(targetPost)    
+        })
+    }
+
+    updateReply(request, callback = () => {}) {
+        console.log("cache.updateReply called")
+        this.findOne(request.postId, () => {
+                
+            var targetPost = this.body[request.postId]
+            for (var i in targetPost.comments) {
+                if (this.body[request.postId].comments[i].id === request.commentId) {
+                    console.log("comment found")
+                    var targetComment = this.body[request.postId].comments[i]
+                    for (var j in targetComment.replies) {
+                        if (targetComment.replies[j].id === request.replyId) {
+                            console.log("reply found")
+                            var targetReply = targetComment.replies[j]
+                            break
+                        }
+                    }
+                    break
+                }
+            }
+            if (typeof targetReply === "undefined") {throw "no reply found, cannot update reply"}
+            targetReply.body = request.body
+            targetReply.lastUpdate = Math.max(Date.now(), targetReply.lastUpdate)
+            targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
+            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+            this.addToUpdateQueue(targetPost.id)
+            callback(targetPost)
+        })
+    }
+
+    deletePost(request, callback = () => {}) {
+        console.log("cache.deletePost called")
+        if(this.isInCache(request.postId)) {
+            delete this.body[request.postId]
+        }
+        this.addToDeleteQueue(request.postId)
+    }
+
+    deleteComment(request, callback = () => {}) {
+        this.findOne(request.postId, () => {
+            console.log("deleting comment")
+            for (var i in this.body[request.postId].comments) {
+                if (this.body[request.postId].comments[i].id === request.commentId) {
+                    this.body[request.postId].comments.splice(i, 1)
+                    console.log(this.body[request.postId].comments.length)
+                    this.addToUpdateQueue(request.postId)
+                    break
+                }
+            }
+            console.log(this.updateQueue)
+            return
+        })
+    }
+
+    deleteReply(request, callback = () => {}) {
+        this.findOne(request.postId, () => {
+            var deleted = false
+            var targetPost = this.body[request.postId]
+            for (var i in targetPost.comments) {
+                if (this.body[request.postId].comments[i].id === request.commentId) {
+                    console.log("comment found")
+                    var targetComment = this.body[request.postId].comments[i]
+                    for (var j in targetComment.replies) {
+                        if (targetComment.replies[j].id === request.replyId) {
+                            console.log("reply found")
+                            targetComment.replies.splice(j, 1)
+                            deleted = true
+                            break
+                        }
+                    }
+                    break
+                }
+            }
+            if (deleted === false) {throw "no reply found, cannot delete reply"}
+            this.addToUpdateQueue(targetPost.id)
+            callback(targetPost)
+        })
     }
 }
 

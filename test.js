@@ -14,15 +14,15 @@ const Post = mongoose.model("Post", postSchema)
 
 
 async function test() {
+    const cache = new Cache()
+    cache.updateCycle()
     connect(() => {
-        const cache = new Cache()
-        cache.createPost({
-            authorId: 1001,
-            title: "14 June title",
-            body: "14 June"
-        }, (newPost) => {
-            console.log(newPost.id)
-            cache.updateDb()
+        cache.deleteReply({
+            postId: "60a3a62225f2e20367aa2350",
+            commentId: "60c747e61673180082642b29",
+            replyId: "60c9faa5a7187002fac8df03",
+        }, () => {
+            
         })    
     })
 }
