@@ -83,7 +83,11 @@ class Cache {
             Post.findByIdAndDelete(this.deleteQueue[i], (err, deletedDoc) => {
                 if (err) {console.log(err)}
                 this.deleteQueue.splice(i, 1)
-                console.log(deletedDoc.id + " is removed")
+                try {
+                    console.log(deletedDoc.id + " is removed")
+                } catch (err) {
+                    console.log(this.deleteQueue[i] + " not found. Cannot delete")
+                }
             })
         }
     }
@@ -95,6 +99,7 @@ class Cache {
             this.deleteFromDb()
             console.log("updateQueue: " + this.updateQueue)
             console.log("deleteQueue: " + this.deleteQueue)
+            console.log(this.body)
         }, timeInterval)
     }
 
@@ -106,9 +111,8 @@ class Cache {
         } else {
             console.log(`${postId} not in cache, retriving from db...`)
             queryPost({filter: {_id: postId}}, (numberOfPosts, posts) => {
-                if (numberOfPosts === 0) {throw "no posts found"}
                 this.pushMany(posts)
-                callback(this.body[postId])
+                callback(numberOfPosts, this.body[postId])
             })
         }
     }
@@ -129,7 +133,12 @@ class Cache {
     
     createComment(request, callback = () => {}) {
         console.log("cache.createComment called")
-        this.findOne(request.postId, () => {
+        this.findOne(request.postId, (numberOfPosts) => {
+            if (numberOfPosts === 0) {
+                console.log("no post found, cannot create comment");
+                callback(numberOfPosts, this.body[request.postId]);
+                return
+            }
             const newComment = new Comment({
                 authorId: request.authorId,
                 body: request.body,
@@ -139,6 +148,7 @@ class Cache {
             this.body[request.postId].comments.unshift(newComment)
             this.body[request.postId].lastUpdate = Math.max(newComment.lastUpdate, this.body[request.postId].lastUpdate)
             this.addToUpdateQueue(request.postId)
+            callback(numberOfPosts, this.body[request.postId])
         })
     }
 
@@ -231,6 +241,7 @@ class Cache {
             delete this.body[request.postId]
         }
         this.addToDeleteQueue(request.postId)
+        callback()
     }
 
     deleteComment(request, callback = () => {}) {
@@ -244,7 +255,7 @@ class Cache {
                     break
                 }
             }
-            console.log(this.updateQueue)
+            callback(this.body[request.postId])
             return
         })
     }

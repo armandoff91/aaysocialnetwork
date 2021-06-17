@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router()
-const expressHandlebars = require("express-handlebars")
-const queryPost = require("../dbServices/queryPost")
-const Cache = require("../services/cache")
+const Cache = require("../services/cache2")
 
 var cache = new Cache()
-cache.init()
+
+cache.updateCycle()
 
 router
     .route("/")
@@ -33,15 +32,14 @@ router
     .route("/newPost")
     .post((req, res) => {
         console.log("new post request received")
-        console.log(req.body)
         const newPost =  {
             authorId: req.body.userId,
             title: req.body.title,
             body: req.body.body
         }           
-        cache.newPost(newPost,(savedPost) => {
-            console.log("post saved")
-            res.send(savedPost + "")
+        cache.createPost(newPost,(savedPost) => {
+            console.log("new post saved")
+            res.send(JSON.stringify(savedPost))
         })
 })
 
@@ -49,25 +47,44 @@ router
     .route("/newComment")
     .post((req, res) => {
         console.log("new comment request received")
-        console.log(req.body)
         const newComment =  {
             authorId: req.body.userId,
             postId: req.body.postId,
             body: req.body.body
         }           
-        cache.newComment(newComment,(updatedPost) => {
+        cache.createComment(newComment,(numberOfPosts, updatedPost) => {
+            console.log("number of posts: " + numberOfPosts)
+            if (numberOfPosts === 0) {res.send(JSON.stringify({message: "post not found, cannot create Comment"})); return}
             console.log("newComment saved")
-            res.send(updatedPost + "")
+            res.send(JSON.stringify(updatedPost))
         })
 })
+
+router
+    .route("/newReply")
+    .post((req, res) => {
+        console.log("new reply request received")
+        const newReply = {
+            authorId: req.body.userId,
+            postId: req.body.postId,
+            commentId: req.body.commentId,
+            body: req.body.body
+        }
+        cache.createReply(newReply, (updatedPost) => {
+            console.log("new reply saved")
+            res.send(JSON.stringify(updatedPost))
+        })
+    })
 
 router
     .route("/deletePost")
     .post((req, res) => {
         console.log("delete post request received")
-        console.log(req.body)
-        cache.deletePost(req.body.postId, (deletedPost) => {
-            res.send(`${deletedPost._id} deleted`)
+        const deletion = {
+            postId: req.body.postId
+        }
+        cache.deletePost(deletion, (message) => {
+            res.send(JSON.stringify({message: `${deletion.postId} deleted.`}))
         })
 })
 
@@ -75,29 +92,68 @@ router
     .route("/deleteComment")
     .post((req, res) => {
         console.log("delete comment request received")
-        console.log(req.body)
-        cache.deleteComment(req.body.CommentId, (updatedPost) => {
-            res.send(updatedPost + "")
+        const deletion = {
+            postId: req.body.postId,
+            commentId: req.body.commentId,
+        }
+        cache.deleteComment(deletion, (updatedPost) => {
+            res.send(JSON.stringify(updatedPost))
         })
 })
 
 router
-    .route("/updatePost")
+    .route("/deleteReply")
+    .post((req, res) => {
+        console.log("delete reply request received")
+        const deletion = {
+            postId : req.body.postId,
+            commentId : req.body.commentId,
+            replyId : req.body.replyId
+        }
+        cache.deleteReply(deletion, (updatedPost) => {
+            res.send(JSON.stringify(updatedPost))
+        })
+    })
+
+router
+    .route("/editPost")
     .post((req, res) => {
         console.log("update post request received.")
-        console.log(req.body)
-        cache.updatePost(req.body, (updatedPost) => {
-            res.send(updatedPost + "")
+        const update = {
+            postId: req.body.postId,
+            body: req.body.body
+        }
+        cache.updatePost(update, (updatedPost) => {
+            res.send(JSON.stringify(updatedPost))
         })
 })
 
 router
-    .route("/updateComment")
+    .route("/editComment")
     .post((req, res) => {
         console.log("update Comment request received.")
-        console.log(req.body)
-        cache.updateComment(req.body, (updatedComment) => {
-            res.send(updatedComment + "")
+        const update = {
+            postId: req.body.postId,
+            commentId: req.body.commentId,
+            body: req.body.body
+        }
+        cache.updateComment(update, (updatedPost) => {
+            res.send(JSON.stringify(updatedPost))
+        })
+})
+
+router
+    .route("/editReply")
+    .post((req, res) => {
+        console.log("edit reply request received")
+        const update = {
+            postId: req.body.postId,
+            commentId: req.body.commentId,
+            replyId: req.body.replyId,
+            body: req.body.body
+        }
+        cache.updateReply(update, (updatedPost) => {
+            res.send(JSON.stringify(updatedPost))
         })
 })
 
