@@ -40,10 +40,10 @@ const userSchema = new mongoose.Schema({
   dateOfSignup: {type: Number, required: true}
 })
 
-userSchema.methods.validPassword = function (attempt) {
+userSchema.methods.validPassword = function (attempt, callback) {
   bcrypt.compare(attempt, this.password, (err, result) => {
     if (err) {throw err}
-    return result
+    callback (result)
   })
 }
 

@@ -14,18 +14,17 @@ passport.use(new LocalStrategy(
     function (username, password, done) {
         // done() is a function
         User.findOne({username : username}, (error, user) => {
-            console.log("user" + user)
-            console.log("passowrd: " + password)
-            console.log("trueorfalse: "+ user.validPassword(password))
             if (error) {return done(error)}
             if (!user) {
                 console.log("invalid user");
                 return done(null, false, {message: "invalid user."})
             }
-            if (!user.validPassword(password)) {
-                return done(null, false, {message: "invalid password."})
-            }
-            return done(null, user)
+            user.validPassword(password, (valid) => {
+                if (!valid) {
+                    return done(null, false, {message: "invalid password."})
+                }
+                return done(null, user)
+            })
         })
     }
 ))
@@ -75,13 +74,3 @@ router
 })
 
 module.exports = router
-
-// bcrypt.hash("password", 10, function(err, hash) {
-//     if (err) {throw err}
-//     bcrypt.compare("password", hash, (err, result) => {
-//         console.log(`correct: ${result}`)
-//     })
-//     bcrypt.compare("wrong", hash, (err, result) => {
-//         console.log(`wrong: ${result}`)
-//     })
-// });
