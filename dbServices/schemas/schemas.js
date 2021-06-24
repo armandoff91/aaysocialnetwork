@@ -32,10 +32,22 @@ const postSchema = new mongoose.Schema({
     __v: {type: Number, default: 1.01}
 });
 
+const userSchema = new mongoose.Schema({
+  username: {type: String, required: true},
+  email: {type: String, required: true},
+  password: {type: String, required: true},
+  dateOfSignup: {type: Number, required: true}
+})
+
+userSchema.methods.validPassword = function(attempt) {
+  return attempt === this.password
+}
+
 const schemas = {
   postSchema: postSchema,
   commentSchema: commentSchema,
-  replySchema: replySchema
+  replySchema: replySchema,
+  userSchema: userSchema
 }
 
 module.exports = schemas;
