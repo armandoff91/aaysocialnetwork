@@ -4,15 +4,31 @@ const mongoose = require("mongoose")
 const schemas = require("../dbServices/schemas/schemas")
 const userSchema = schemas.userSchema
 const bcrypt = require("bcrypt")
+const passport = require("passport")
+const LocalStrategy = require("passport-local").Strategy
 
 const User = mongoose.model("User", userSchema)
 
-var user = new User ({
-    username: "Albert",
-    password: "password",
-    email: "abc@gmail.com",
-    dateOfSignup: Date.now()
-})
+
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        // done() is a function
+        User.findOne({username : username}, (error, user) => {
+            console.log("user" + user)
+            console.log("passowrd: " + password)
+            console.log("trueorfalse: "+ user.validPassword(password))
+            if (error) {return done(error)}
+            if (!user) {
+                console.log("invalid user");
+                return done(null, false, {message: "invalid user."})
+            }
+            if (!user.validPassword(password)) {
+                return done(null, false, {message: "invalid password."})
+            }
+            return done(null, user)
+        })
+    }
+))
 
 router
     .route("/")
@@ -46,6 +62,16 @@ router
                 res.json({msg: "User information incomplete/invalid"})
             })
         })
+})
+
+router
+    .route("/login")
+    .post(passport.authenticate(
+        'local', 
+        {session: false}
+    ), (req, res) => {
+        console.log(req.user)
+        res.json({msg: "login successful"})
 })
 
 module.exports = router

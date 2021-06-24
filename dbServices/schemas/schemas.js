@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const bcrypt = require("bcrypt")
 
 const replySchema = new mongoose.Schema({
   authorId: Number,
@@ -39,8 +40,11 @@ const userSchema = new mongoose.Schema({
   dateOfSignup: {type: Number, required: true}
 })
 
-userSchema.methods.validPassword = function(attempt) {
-  return attempt === this.password
+userSchema.methods.validPassword = function (attempt) {
+  bcrypt.compare(attempt, this.password, (err, result) => {
+    if (err) {throw err}
+    return result
+  })
 }
 
 const schemas = {

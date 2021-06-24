@@ -6,6 +6,7 @@ const auth = require("./routes/auth")
 const home = require("./routes/home")
 const posts = require("./routes/posts")
 const connect = require("./dbServices/connect")
+const passport = require("passport")
 
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
@@ -14,6 +15,7 @@ var formDataParser = multer().none()
 var urlencodedParser = bodyParser.urlencoded({extended: false})
 var rawParser = bodyParser.raw()
 var textParser = bodyParser.text()
+
 
 var Cache = require("./services/cache")
 
@@ -25,6 +27,7 @@ connect(() => {
 
 app.engine('handlebars', expressHandlebars());
 app.set('view engine', 'handlebars')
+app.use(passport.initialize());
 
 app.use(jsonParser)
 app.use(urlencodedParser)
