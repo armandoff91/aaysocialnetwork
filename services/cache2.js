@@ -37,6 +37,11 @@ class Cache {
         return typeof this.body[postId] != "undefined"
     }
 
+    isAuthorized(requestUserId, objectAuthorId) {
+        console.log(requestUserId, objectAuthorId)
+        return requestUserId === objectAuthorId
+    }
+
     addToUpdateQueue(postId) {
         if (typeof postId != "string") {
             console.log("postId is not a string, cannot add to Update Queue")
@@ -59,7 +64,6 @@ class Cache {
             return
         }
         this.deleteQueue.push(postId)
-        console.log(this.deleteQueue)
     }
 
     writeToDb() {
@@ -99,7 +103,6 @@ class Cache {
             this.deleteFromDb()
             console.log("updateQueue: " + this.updateQueue)
             console.log("deleteQueue: " + this.deleteQueue)
-            console.log(this.body)
         }, timeInterval)
     }
 
@@ -180,10 +183,14 @@ class Cache {
         this.findOne(request.postId, ()=> {
             console.log("cache.updatePost called")
             const targetPost = this.body[request.postId]
-            targetPost.body = request.body
-            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
-            this.addToUpdateQueue(targetPost.id)
-            callback(targetPost)
+            if (this.isAuthorized(request.authorId, targetPost.authorId)) {
+                targetPost.body = request.body
+                targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+                this.addToUpdateQueue(targetPost.id)
+                callback(targetPost)
+                return
+            }
+            callback({msg: "unauthorized to update post"})
         })
     }
 
@@ -197,12 +204,16 @@ class Cache {
                     break
                 }
             }
-            if (typeof targetComment === "undefined") {throw "no comment found, cannot update comment"}
-            targetComment.body = request.body
-            targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
-            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
-            this.addToUpdateQueue(targetPost.id)
-            callback(targetPost)    
+            if (typeof targetComment === "undefined") {callback({ msg: "no comment found, cannot update"})}
+            if (this.isAuthorized(targetComment.authorId, request.authorId)) {
+                targetComment.body = request.body
+                targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
+                targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+                this.addToUpdateQueue(targetPost.id)
+                callback(targetPost)
+                return   
+            }
+            callback({ msg: "unauthorized to edit comment."})    
         })
     }
 

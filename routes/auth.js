@@ -12,7 +12,7 @@ const User = mongoose.model("User", userSchema)
 
 passport.use(new LocalStrategy(
     function (username, password, done) {
-        // done() is a function
+        // done() is a callback
         User.findOne({username : username}, (error, user) => {
             if (error) {return done(error)}
             if (!user) {
@@ -28,6 +28,14 @@ passport.use(new LocalStrategy(
         })
     }
 ))
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+  
+passport.deserializeUser(function(user, done) {
+    done(null, user);
+});
 
 router
     .route("/")
@@ -67,10 +75,11 @@ router
     .route("/login")
     .post(passport.authenticate(
         'local', 
-        {session: false}
+        {session: true}
     ), (req, res) => {
         console.log(req.user)
         res.json({msg: "login successful"})
 })
+
 
 module.exports = router

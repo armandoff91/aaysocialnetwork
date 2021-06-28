@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
 
 const replySchema = new mongoose.Schema({
-  authorId: Number,
+  authorId: {required: true, type: String},
   body: String,
   date: {type: Number, default: 0},
   hidden: {type: Boolean, default: false},
@@ -11,7 +11,7 @@ const replySchema = new mongoose.Schema({
 })
 
 const commentSchema = new mongoose.Schema({
-  authorId: Number,
+  authorId: {required: true, type: String},
   body: String,
   date: {type: Number, default: 0},
   hidden: {type: Boolean, default: false},
@@ -23,7 +23,7 @@ const commentSchema = new mongoose.Schema({
 
 const postSchema = new mongoose.Schema({
     title:  String,
-    authorId: Number,
+    authorId: {required: true, type: String},
     body:   String,
     comments: [commentSchema],
     date: { type: Number, default: 0 },

@@ -6,15 +6,24 @@ var cache = new Cache()
 
 cache.updateCycle()
 
+
 router
     .route("/")
     .get((req, res) => {
+        console.log(req.user)
+        console.log(req.session)
         console.log("get /post reached.")
-        console.log(req.query)
-        console.log(req.params)
-        console.log(req.body)
         res.send(`send JSON　with 10 posts`)
 })
+
+router.use("/", (req, res, next) => {
+    if (!req.user) {
+        res.json({ msg: "please login."})
+        return
+    }
+    next()
+})
+
 
 router
     .route("/")
@@ -28,12 +37,13 @@ router
         // console.log(req.params)
 })
 
+
 router
     .route("/newPost")
     .post((req, res) => {
         console.log("new post request received")
         const newPost =  {
-            authorId: req.body.userId,
+            authorId: req.user,
             title: req.body.title,
             body: req.body.body
         }           
@@ -48,7 +58,7 @@ router
     .post((req, res) => {
         console.log("new comment request received")
         const newComment =  {
-            authorId: req.body.userId,
+            authorId: req.user,
             postId: req.body.postId,
             body: req.body.body
         }           
@@ -120,6 +130,7 @@ router
     .post((req, res) => {
         console.log("update post request received.")
         const update = {
+            authorId: req.user,
             postId: req.body.postId,
             body: req.body.body
         }

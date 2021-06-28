@@ -1,4 +1,5 @@
 const express = require("express")
+const session = require("express-session")
 const expressHandlebars = require("express-handlebars")
 const app = express()
 const port = 3000
@@ -25,9 +26,11 @@ connect(() => {
     console.log("db connected, ready to accept commands")
 })
 
+app.use(session({ secret: process.env.SESSION_SECRET}))
 app.engine('handlebars', expressHandlebars());
 app.set('view engine', 'handlebars')
 app.use(passport.initialize());
+app.use(passport.session())
 
 app.use(jsonParser)
 app.use(urlencodedParser)
