@@ -38,7 +38,7 @@ class Cache {
     }
 
     isAuthorized(requestUserId, objectAuthorId) {
-        console.log(requestUserId, objectAuthorId)
+        console.log("id1: " + requestUserId, "id2: " + objectAuthorId)
         return requestUserId === objectAuthorId
     }
 
@@ -51,6 +51,7 @@ class Cache {
             console.log(`${postId} already in update queue`)
             return
         }
+        console.log(postId + " added to update queue.")
         this.updateQueue.push(postId)
     }
 
@@ -63,6 +64,7 @@ class Cache {
             console.log(`${postId} already in delete queue`)
             return
         }
+        console.log(postId + " added to delete queue.")
         this.deleteQueue.push(postId)
     }
 
@@ -101,8 +103,8 @@ class Cache {
         setInterval(() => {
             this.writeToDb()
             this.deleteFromDb()
-            console.log("updateQueue: " + this.updateQueue)
-            console.log("deleteQueue: " + this.deleteQueue)
+            // console.log("updateQueue: " + this.updateQueue)
+            // console.log("deleteQueue: " + this.deleteQueue)
         }, timeInterval)
     }
 
@@ -110,7 +112,7 @@ class Cache {
         console.log("findOne called")
         if (this.isInCache(postId)) {
             console.log (`${postId} found in cache, sending to router...`)
-            callback(this.body[postId])
+            callback(1, this.body[postId])
         } else {
             console.log(`${postId} not in cache, retriving from db...`)
             queryPost({filter: {_id: postId}}, (numberOfPosts, posts) => {
@@ -138,8 +140,7 @@ class Cache {
         console.log("cache.createComment called")
         this.findOne(request.postId, (numberOfPosts) => {
             if (numberOfPosts === 0) {
-                console.log("no post found, cannot create comment");
-                callback(numberOfPosts, this.body[request.postId]);
+                callback({msg: "no post found, cannot create comment"});
                 return
             }
             const newComment = new Comment({
@@ -151,13 +152,15 @@ class Cache {
             this.body[request.postId].comments.unshift(newComment)
             this.body[request.postId].lastUpdate = Math.max(newComment.lastUpdate, this.body[request.postId].lastUpdate)
             this.addToUpdateQueue(request.postId)
-            callback(numberOfPosts, this.body[request.postId])
+            callback(this.body[request.postId])
+            return
         })
     }
 
     createReply(request, callback = () => {}) {
         console.log("cache.createReply called")
-        this.findOne(request.postId, () => {
+        this.findOne(request.postId, (numberOfPosts) => {
+            if (numberOfPosts === 0) {callback({msg: "no post found, cannot create reply."}); return}
             const newReply = new Reply({
                 authorId: request.authorId,
                 body: request.body,
@@ -171,7 +174,7 @@ class Cache {
                     break
                 }
             }
-            if (typeof targetComment === "undefined") {throw "no comment found, cannot create reply."}
+            if (typeof targetComment === "undefined") {callback ({msg: "no comment found, cannot create reply."}); return}
             targetComment.replies.unshift(newReply)
             targetPost.lastUpdate = Math.max(newReply.lastUpdate, targetPost.lastUpdate)
             this.addToUpdateQueue(request.postId)
@@ -180,9 +183,9 @@ class Cache {
     }
 
     updatePost(request, callback = () => {}) {
-        this.findOne(request.postId, ()=> {
+        this.findOne(request.postId, (numberOfPosts, targetPost)=> {
             console.log("cache.updatePost called")
-            const targetPost = this.body[request.postId]
+            if (numberOfPosts === 0) {callback({msg: "no post found, cannot update post."}); return}
             if (this.isAuthorized(request.authorId, targetPost.authorId)) {
                 targetPost.body = request.body
                 targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
@@ -196,15 +199,18 @@ class Cache {
 
     updateComment(request, callback = () => {}) {
         console.log("cache.updateComment called")
-        this.findOne(request.postId, ()=> {
-            var targetPost = this.body[request.postId]
+        this.findOne(request.postId, (numberOfPosts, targetPost)=> {
+            if (numberOfPosts === 0) {
+                callback({msg: "no post found, cannot update comment"})
+                return
+            }
             for (var i in targetPost.comments) {
                 if (targetPost.comments[i].id === request.commentId) {
                     var targetComment = this.body[request.postId].comments[i]
                     break
                 }
             }
-            if (typeof targetComment === "undefined") {callback({ msg: "no comment found, cannot update"})}
+            if (typeof targetComment === "undefined") {callback({ msg: "no comment found, cannot update"}); return}
             if (this.isAuthorized(targetComment.authorId, request.authorId)) {
                 targetComment.body = request.body
                 targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
@@ -219,8 +225,8 @@ class Cache {
 
     updateReply(request, callback = () => {}) {
         console.log("cache.updateReply called")
-        this.findOne(request.postId, () => {
-                
+        this.findOne(request.postId, (numberOfPosts) => {
+            if (numberOfPosts === 0) {callback({msg: "no post found, cannot update reply"}); return}   
             var targetPost = this.body[request.postId]
             for (var i in targetPost.comments) {
                 if (this.body[request.postId].comments[i].id === request.commentId) {
@@ -236,37 +242,57 @@ class Cache {
                     break
                 }
             }
-            if (typeof targetReply === "undefined") {throw "no reply found, cannot update reply"}
-            targetReply.body = request.body
-            targetReply.lastUpdate = Math.max(Date.now(), targetReply.lastUpdate)
-            targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
-            targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
-            this.addToUpdateQueue(targetPost.id)
-            callback(targetPost)
+            if (typeof targetReply === "undefined") {callback ({msg: "no reply/comment found, cannot update reply"}); return}
+            if (this.isAuthorized(targetReply.authorId, request.authorId)) {
+                targetReply.body = request.body
+                targetReply.lastUpdate = Math.max(Date.now(), targetReply.lastUpdate)
+                targetComment.lastUpdate = Math.max(Date.now(), targetComment.lastUpdate)
+                targetPost.lastUpdate = Math.max(Date.now(), targetPost.lastUpdate)
+                this.addToUpdateQueue(targetPost.id)
+                callback(targetPost)
+                return
+            }
+            callback({msg: "unauthorized to edit reply."})
+            return
         })
     }
 
     deletePost(request, callback = () => {}) {
         console.log("cache.deletePost called")
-        if(this.isInCache(request.postId)) {
-            delete this.body[request.postId]
-        }
-        this.addToDeleteQueue(request.postId)
-        callback()
+        this.findOne(request.postId, (numberOfPosts, targetPost) => {
+            if (numberOfPosts === 0) {
+                callback({msg: "no Post found, cannot delete post."});
+                return
+            }
+            if (this.isAuthorized(request.userId, targetPost.authorId)) {
+                delete this.body[request.postId]
+                this.addToDeleteQueue(request.postId)
+                callback({msg: request.postId + " deleted."})
+                return
+            }
+            callback({msg: "unauthorized to delete post"})
+            return
+        })
     }
 
     deleteComment(request, callback = () => {}) {
-        this.findOne(request.postId, () => {
+        this.findOne(request.postId, (numberOfPosts, targetPost) => {
+            if(numberOfPosts === 0) {callback({msg: "no post found, cannot delete comment"}); return}
             console.log("deleting comment")
             for (var i in this.body[request.postId].comments) {
                 if (this.body[request.postId].comments[i].id === request.commentId) {
-                    this.body[request.postId].comments.splice(i, 1)
-                    console.log(this.body[request.postId].comments.length)
-                    this.addToUpdateQueue(request.postId)
-                    break
+                    if (this.isAuthorized(request.userId, this.body[request.postId].comments[i].authorId)) {
+                        this.body[request.postId].comments.splice(i, 1)
+                        console.log(this.body[request.postId].comments.length)
+                        this.addToUpdateQueue(request.postId)
+                        callback(this.body[request.postId])
+                        return
+                    }
+                    callback({msg: "unauthorized to delete comment."})
+                    return
                 }
             }
-            callback(this.body[request.postId])
+            callback({msg: "no comment found, cannot delete comment."})
             return
         })
     }

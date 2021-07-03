@@ -62,10 +62,7 @@ router
             postId: req.body.postId,
             body: req.body.body
         }           
-        cache.createComment(newComment,(numberOfPosts, updatedPost) => {
-            console.log("number of posts: " + numberOfPosts)
-            if (numberOfPosts === 0) {res.send(JSON.stringify({message: "post not found, cannot create Comment"})); return}
-            console.log("newComment saved")
+        cache.createComment(newComment,(updatedPost) => {
             res.send(JSON.stringify(updatedPost))
         })
 })
@@ -75,7 +72,7 @@ router
     .post((req, res) => {
         console.log("new reply request received")
         const newReply = {
-            authorId: req.body.userId,
+            authorId: req.user,
             postId: req.body.postId,
             commentId: req.body.commentId,
             body: req.body.body
@@ -91,10 +88,11 @@ router
     .post((req, res) => {
         console.log("delete post request received")
         const deletion = {
+            userId: req.user,
             postId: req.body.postId
         }
         cache.deletePost(deletion, (message) => {
-            res.send(JSON.stringify({message: `${deletion.postId} deleted.`}))
+            res.send(JSON.stringify(message))
         })
 })
 
@@ -103,6 +101,7 @@ router
     .post((req, res) => {
         console.log("delete comment request received")
         const deletion = {
+            userId: req.user,
             postId: req.body.postId,
             commentId: req.body.commentId,
         }
@@ -144,6 +143,7 @@ router
     .post((req, res) => {
         console.log("update Comment request received.")
         const update = {
+            authorId: req.user,
             postId: req.body.postId,
             commentId: req.body.commentId,
             body: req.body.body
@@ -158,6 +158,7 @@ router
     .post((req, res) => {
         console.log("edit reply request received")
         const update = {
+            authorId: req.user,
             postId: req.body.postId,
             commentId: req.body.commentId,
             replyId: req.body.replyId,
