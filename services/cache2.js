@@ -17,6 +17,19 @@ class Cache {
         this.deleteQueue = []
     }
 
+    init(numberOfposts = 100) {
+        queryPost({filter: {}, projection: null,
+        option: {
+            limit: numberOfposts, 
+            sort: {lastUpdate: -1}
+        }}, 
+        (numberOfPosts, posts) => {
+            for (var i=0; i<posts.length; i++) {
+                this.body[posts[i].id] = posts[i]
+            }
+        })
+    }
+
     pushOne(object) {
         if (typeof object != "object") {
             throw "input is not an single object, try .pushMany"

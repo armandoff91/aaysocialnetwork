@@ -18,13 +18,15 @@ var rawParser = bodyParser.raw()
 var textParser = bodyParser.text()
 
 
-var Cache = require("./services/cache")
+var date = new Date()
 
-console.log(`this is time of app.js ${Date.now()}`)
+
+console.log(`this is time of app.js ${date.toString()}`)
 
 connect(() => {
     console.log("db connected, ready to accept commands")
 })
+
 
 app.use(session({ secret: process.env.SESSION_SECRET}))
 app.engine('handlebars', expressHandlebars());
@@ -36,12 +38,21 @@ app.use(jsonParser)
 app.use(urlencodedParser)
 app.use(formDataParser)
 
+app.use(express.static("public"))
 
 app.get("/", (req, res) => {
     res.render('landing')
 })
 
 app.use("/auth", auth);
+
+app.use("/", (req, res, next) => {
+    if (!req.user) {
+        res.json({ msg: "please login."})
+        return
+    }
+    next()
+})
 
 app.use("/home", home);
 app.use("/posts", posts);

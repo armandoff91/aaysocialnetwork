@@ -11,7 +11,6 @@ function connect(callback) {
         console.log(err)
     })
     db.then(() => {
-        console.log("db connected")
         callback()
     })
 }

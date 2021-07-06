@@ -4,29 +4,15 @@ const Cache = require("../services/cache2")
 
 var cache = new Cache()
 
+cache.init()
 cache.updateCycle()
 
 
 router
     .route("/")
     .get((req, res) => {
-        console.log(req.user)
-        console.log(req.session)
-        console.log("get /post reached.")
-        res.send(`send JSON　with 10 posts`)
-})
-
-router.use("/", (req, res, next) => {
-    if (!req.user) {
-        res.json({ msg: "please login."})
-        return
-    }
-    next()
-})
-
-
-router
-    .route("/")
+        res.json({msg: "posts /get"})
+    })
     .post((req, res) => {
         console.log("/posts post req received")
         //req.params

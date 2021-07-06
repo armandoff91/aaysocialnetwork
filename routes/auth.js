@@ -38,14 +38,10 @@ passport.deserializeUser(function(user, done) {
 });
 
 router
-    .route("/")
-    .get((req, res) => {
-        console.log("route reached.")
-        res.send("this is /auth")
-})
-
-router
     .route("/register") // auth/register
+    .get((req, res) => {
+        res.render("register")
+    })
     .post((req, res) => {
         console.log("auth/register reached")
         if (req.body.password != req.body.confirmPassword) {
@@ -62,23 +58,33 @@ router
             if (err) {console.log(err); return}
             entry.password = hash
             const newUser = new User ({...entry})
-            newUser.save().then((newUser) => {
-                res.json({msg: "new user saved"})
-            }).catch((err) => {
-                console.log("user save failed, user info invalid")
-                res.json({msg: "User information incomplete/invalid"})
+            User.countDocuments({username: entry.username}, (err, count) => {
+                if (count === 0) {
+                    newUser.save().then((newUser) => {
+                        res.redirect("auth/login")
+                        // res.json({msg: "new user saved"})
+                    }).catch((err) => {
+                        console.log("user save failed, user info invalid")
+                        res.json({msg: "User information incomplete/invalid"})
+                    })
+                    return
+                }
+                res.send({msg: `${entry.username} already exists.`})
             })
         })
 })
 
 router
     .route("/login")
+    .get((req, res) => {
+        res.render("login")
+    })
     .post(passport.authenticate(
         'local', 
         {session: true}
     ), (req, res) => {
-        console.log(req.user)
-        res.json({msg: "login successful"})
+        console.log(`${req.user.username} just logged in.`)
+        res.redirect("../home")
 })
 
 
