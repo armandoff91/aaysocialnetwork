@@ -15,12 +15,8 @@ router
     })
     .post((req, res) => {
         console.log("/posts post req received")
-        //req.params
-        //req.query
         console.log(req.body)
         res.send("post req received")
-        // console.log(req.query)
-        // console.log(req.params)
 })
 
 
