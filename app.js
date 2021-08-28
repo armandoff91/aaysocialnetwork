@@ -16,7 +16,7 @@ var formDataParser = multer().none()
 var urlencodedParser = bodyParser.urlencoded({extended: false})
 var rawParser = bodyParser.raw()
 var textParser = bodyParser.text()
-
+var flash = require('connect-flash')
 
 var date = new Date()
 
@@ -39,6 +39,8 @@ app.use(urlencodedParser)
 app.use(formDataParser)
 
 app.use(express.static("public"))
+
+app.use(flash())
 
 app.get("/", (req, res) => {
     res.render('landing')

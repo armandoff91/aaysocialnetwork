@@ -9,7 +9,6 @@ const LocalStrategy = require("passport-local").Strategy
 
 const User = mongoose.model("User", userSchema)
 
-
 passport.use(new LocalStrategy(
     function (username, password, done) {
         // done() is a callback
@@ -80,11 +79,15 @@ router
         res.render("login")
     })
     .post(passport.authenticate(
-        'local', 
-        {session: true}
+        'local',
+        {
+            session: true,
+            failureFlash: 'Invalid username or password.'
+        }
+
     ), (req, res) => {
         console.log(`${req.user.username} just logged in.`)
-        res.redirect("../home")
+        res.json({msg: "login success"})
 })
 
 

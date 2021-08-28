@@ -107,8 +107,14 @@ class Login extends React.Component {
 
         // Define what happens on successful data submission
         XHR.addEventListener('load', function(e) {
-            let baseUrl = window.location.origin
-            window.location.replace(baseUrl + '/home');
+            var msg = `${XHR.status}`
+            if (XHR.status === 200) {
+                const url = window.location.origin + "/home"
+                window.location.replace(url)
+            } else if (XHR.status === 401) {
+                msg += ": invalid username/password."
+            }
+            document.querySelector("#msg").innerHTML = msg
         });
 
         // Define what happens in case of error
