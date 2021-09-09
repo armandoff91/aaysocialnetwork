@@ -11,12 +11,14 @@ cache.updateCycle()
 router
     .route("/")
     .get((req, res) => {
-        res.json({msg: "posts /get"})
-    })
-    .post((req, res) => {
-        console.log("/posts post req received")
-        console.log(req.body)
-        res.send("post req received")
+        console.log(req.query)
+        cache.findOne(req.query.postId, (numberOfPosts, post) => {
+            if (numberOfPosts === 1) {
+                res.json(post)
+                return
+            } 
+            res.json({msg: "no post found"})
+        })
 })
 
 
