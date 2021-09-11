@@ -19,106 +19,133 @@ var Post = function (_React$Component) {
         _this.commentToggle = _this.commentToggle.bind(_this);
         _this.state = {
             isPostReceived: false,
-            isCommentToggled: false
+            isCommentToggled: false,
+            post: {
+                "date": null,
+                "hidden": null,
+                "lastUpdate": null,
+                "__v": null,
+                "_id": null,
+                "authorId": null,
+                "title": null,
+                "body": null,
+                "comments": []
+            }
         };
         return _this;
     }
 
     _createClass(Post, [{
-        key: 'commentToggle',
+        key: "commentToggle",
         value: function commentToggle() {
             this.setState({
                 isCommentToggled: this.state.isCommentToggled === false ? true : false
             });
         }
     }, {
-        key: 'query',
-        value: function query(postId, callback) {
+        key: "query",
+        value: function query(callback) {
             var XHR = new XMLHttpRequest();
 
             XHR.addEventListener('load', function (e) {
-                callback(XHR.response);
-                // setState here
+
+                callback(JSON.parse(XHR.response));
             });
 
             XHR.addEventListener('error', function (e) {
                 alert('Oops! Something went wrong.');
             });
 
-            XHR.open('GET', '/posts/?postId=' + postId);
+            XHR.open('GET', '/posts/?postId=' + "613a0d97bd4dbb032efd8100");
             XHR.send(null);
         }
     }, {
-        key: 'render',
+        key: "loadToBlock",
+        value: function loadToBlock() {
+            var _this2 = this;
+
+            this.query(function (post) {
+                _this2.setState({
+                    post: post
+                });
+            });
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.loadToBlock();
+        }
+    }, {
+        key: "render",
         value: function render() {
             return React.createElement(
-                'div',
-                { 'class': 'container' },
+                "div",
+                { "class": "container" },
                 React.createElement(
-                    'div',
-                    { 'class': 'row' },
+                    "div",
+                    { "class": "row" },
                     React.createElement(
-                        'div',
-                        { 'class': 'col-3 col-sm-1 h-100' },
-                        React.createElement('img', { src: 'images/gump.jpg', 'class': 'img-thumbnail' })
+                        "div",
+                        { "class": "col-3 col-sm-1 h-100" },
+                        React.createElement("img", { src: "images/gump.jpg", "class": "img-thumbnail" })
                     ),
                     React.createElement(
-                        'div',
-                        { 'class': 'col-11' },
+                        "div",
+                        { "class": "col-11" },
                         React.createElement(
-                            'p',
-                            { 'class': 'strong' },
-                            'Author name'
+                            "p",
+                            { "class": "strong" },
+                            this.state.post.body
                         ),
                         React.createElement(
-                            'p',
-                            { 'class': 'small' },
-                            'date'
+                            "p",
+                            { "class": "small" },
+                            this.state.post.date
                         )
                     )
                 ),
                 React.createElement(
-                    'div',
-                    { 'class': 'row' },
+                    "div",
+                    { "class": "row" },
                     React.createElement(
-                        'div',
-                        { 'class': 'col' },
+                        "div",
+                        { "class": "col" },
                         React.createElement(
-                            'p',
-                            { 'class': 'strong' },
-                            'What is Lorem Ipsum?'
+                            "p",
+                            { "class": "strong" },
+                            this.state.post.title
                         ),
                         React.createElement(
-                            'p',
+                            "p",
                             null,
-                            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
+                            this.state.post.body
                         )
                     )
                 ),
                 React.createElement(
-                    'div',
-                    { 'class': 'row justify-content-between' },
+                    "div",
+                    { "class": "row justify-content-between" },
                     React.createElement(
-                        'div',
-                        { 'class': 'col' },
+                        "div",
+                        { "class": "col" },
                         React.createElement(
-                            'button',
-                            { type: 'button', 'class': 'btn' },
-                            'likes'
+                            "button",
+                            { type: "button", "class": "btn" },
+                            "likes"
                         ),
                         React.createElement(
-                            'button',
-                            { type: 'button', 'class': 'btn', onClick: this.commentToggle },
-                            'Comment'
+                            "button",
+                            { type: "button", "class": "btn", onClick: this.commentToggle },
+                            "Comment"
                         ),
                         React.createElement(
-                            'a',
+                            "a",
                             null,
-                            'num of comments'
+                            this.state.post.comments.length
                         )
                     )
                 ),
-                React.createElement(CommentSection, { isCommentToggled: this.state.isCommentToggled })
+                React.createElement(CommentSection, { isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
             );
         }
     }]);
@@ -132,28 +159,62 @@ var CommentSection = function (_React$Component2) {
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        return _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+
+        _this3.commentList = _this3.commentList.bind(_this3);
+        return _this3;
     }
 
     _createClass(CommentSection, [{
-        key: 'render',
+        key: "commentList",
+        value: function commentList() {
+            return this.props.commentList.map(function (comment) {
+                return React.createElement(Comment, { key: comment._id, comment: comment });
+            });
+        }
+    }, {
+        key: "render",
         value: function render() {
             if (this.props.isCommentToggled) {
-                return React.createElement(
-                    'div',
-                    null,
-                    'commentLIst'
-                );
+                return this.commentList();
             }
             return React.createElement(
-                'div',
+                "div",
                 null,
-                'blank'
+                "blank"
             );
         }
     }]);
 
     return CommentSection;
+}(React.Component);
+
+var Comment = function (_React$Component3) {
+    _inherits(Comment, _React$Component3);
+
+    function Comment(props) {
+        _classCallCheck(this, Comment);
+
+        var _this4 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+
+        _this4.state = {
+            comment: _this4.props.comment
+        };
+        return _this4;
+    }
+
+    _createClass(Comment, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                this.props.comment.body
+            );
+        }
+    }]);
+
+    return Comment;
 }(React.Component);
 
 ReactDOM.render(React.createElement(Post, null), document.querySelector("#postBoard"));

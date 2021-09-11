@@ -6,7 +6,18 @@ class Post extends React.Component{
         this.commentToggle = this.commentToggle.bind(this)
         this.state = {
             isPostReceived: false,
-            isCommentToggled: false
+            isCommentToggled: false,
+            post: {
+                "date": null,
+                "hidden":null,
+                "lastUpdate":null,
+                "__v": null,
+                "_id":null,
+                "authorId":null,
+                "title": null,
+                "body":null,
+                "comments":[]
+            }
         }
     }
 
@@ -16,20 +27,33 @@ class Post extends React.Component{
         })
     }
 
-    query(postId, callback) {
+    query(callback) {
         const XHR = new XMLHttpRequest()
 
         XHR.addEventListener('load', function(e) {
-            callback(XHR.response)
-            // setState here
+            
+            callback(JSON.parse(XHR.response))
+            
         });
 
         XHR.addEventListener('error', function(e) {
             alert( 'Oops! Something went wrong.' );
         } );
 
-        XHR.open( 'GET', '/posts/?postId=' + postId );
+        XHR.open( 'GET', '/posts/?postId=' + "613a0d97bd4dbb032efd8100" );
         XHR.send(null);
+    }
+
+    loadToBlock() {
+        this.query((post) => {
+            this.setState({
+                post: post
+            })
+        })
+    }
+
+    componentDidMount() {
+        this.loadToBlock()
     }
 
     render() {
@@ -37,24 +61,24 @@ class Post extends React.Component{
             <div class="row">
                 <div class="col-3 col-sm-1 h-100"><img src="images/gump.jpg" class="img-thumbnail"></img></div>
                 <div class="col-11">
-                    <p class="strong">Author name</p>
-                    <p class="small">date</p>
+                    <p class="strong">{this.state.post.body}</p>
+                    <p class="small">{this.state.post.date}</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <p class="strong">What is Lorem Ipsum?</p>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    <p class="strong">{this.state.post.title}</p>
+                    <p>{this.state.post.body}</p>
                 </div>
             </div>
             <div class="row justify-content-between">
                 <div class="col">
                     <button type="button" class="btn">likes</button>
                     <button type="button" class="btn" onClick={this.commentToggle}>Comment</button>
-                    <a>num of comments</a>
+                    <a>{this.state.post.comments.length}</a>
                 </div>
             </div>
-            <CommentSection isCommentToggled={this.state.isCommentToggled}/>
+            <CommentSection isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
         </div>
     }
 }
@@ -62,16 +86,34 @@ class Post extends React.Component{
 class CommentSection extends React.Component {
     constructor(props) {
         super(props)
+        this.commentList = this.commentList.bind(this)
+    }
+
+    commentList() {
+        return this.props.commentList.map((comment) => <Comment key={comment._id} comment={comment}/>)
     }
 
     render() {
         if (this.props.isCommentToggled) {
-            return <div>
-                commentLIst
-            </div>
+            return this.commentList()
         }
         return <div>
             blank
+        </div>
+    }
+}
+
+class Comment extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            comment : this.props.comment
+        }
+    }
+
+    render() {
+        return <div>
+            {this.props.comment.body}
         </div>
     }
 }

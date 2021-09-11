@@ -1,0 +1,11 @@
+div {
+    outline: 1px dotted grey
+}
+
+h1 {
+    outline: 1px solid green
+}
+
+p {
+    outline: 1px solid blue
+}
