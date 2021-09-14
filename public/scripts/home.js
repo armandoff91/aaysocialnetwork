@@ -18,6 +18,7 @@ var Post = function (_React$Component) {
 
         _this.commentToggle = _this.commentToggle.bind(_this);
         _this.handleCommentSubmit = _this.handleCommentSubmit.bind(_this);
+        _this.handleReplySubmit = _this.handleReplySubmit.bind(_this);
         _this.state = {
             isPostReceived: false,
             isCommentToggled: false,

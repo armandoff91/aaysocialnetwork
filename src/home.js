@@ -5,6 +5,7 @@ class Post extends React.Component{
         super(props)
         this.commentToggle = this.commentToggle.bind(this)
         this.handleCommentSubmit = this.handleCommentSubmit.bind(this)
+        this.handleReplySubmit = this.handleReplySubmit.bind(this)
         this.state = {
             isPostReceived: false,
             isCommentToggled: false,
