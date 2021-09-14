@@ -1,9 +1,7 @@
 const mongoose = require("mongoose")
 
 const queryPost = require("../dbServices/queryPost")
-const createPost = require("../dbServices/createPost")
 const schemas = require("../dbServices/schemas/schemas")
-const createComment = require("../dbServices/createComment")
 
 const Post = mongoose.model("Post", schemas.postSchema)
 const Comment = mongoose.model("Comment", schemas.commentSchema)
@@ -28,6 +26,10 @@ class Cache {
                 this.body[posts[i].id] = posts[i]
             }
         })
+    }
+
+    getPostList() {
+        return Object.keys(this.body)
     }
 
     pushOne(object) {

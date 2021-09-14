@@ -4,6 +4,7 @@ class Post extends React.Component{
     constructor(props) {
         super(props)
         this.commentToggle = this.commentToggle.bind(this)
+        this.handleCommentSubmit = this.handleCommentSubmit.bind(this)
         this.state = {
             isPostReceived: false,
             isCommentToggled: false,
@@ -27,25 +28,43 @@ class Post extends React.Component{
         })
     }
 
-    query(callback) {
+    getRequest(callback) {
         const XHR = new XMLHttpRequest()
 
         XHR.addEventListener('load', function(e) {
-            
             callback(JSON.parse(XHR.response))
-            
         });
 
         XHR.addEventListener('error', function(e) {
             alert( 'Oops! Something went wrong.' );
         } );
 
-        XHR.open( 'GET', '/posts/?postId=' + "613a0d97bd4dbb032efd8100" );
-        XHR.send(null);
+        XHR.open('GET', '/posts/?postId=' + this.props.postId );
+        XHR.send(null); 
+    }
+
+    postRequest(url, data, callback) {
+        const XHR = new XMLHttpRequest()
+        var formData = new FormData()
+
+        for (key in data) {
+            formData.append(key, data[key])
+        }
+
+        XHR.addEventListener('load', function(e) {
+            callback(JSON.parse(XHR.response))
+        });
+
+        XHR.addEventListener('error', function(e) {
+            alert( 'Oops! Something went wrong.' );
+        } );
+
+        XHR.open('POST', '/posts/' + url);
+        XHR.send(formData);
     }
 
     loadToBlock() {
-        this.query((post) => {
+        this.getRequest((post) => {
             this.setState({
                 post: post
             })
@@ -56,12 +75,34 @@ class Post extends React.Component{
         this.loadToBlock()
     }
 
+    handleCommentSubmit(event) {
+        event.preventDefault()
+        console.log("submit comment pressed")
+        this.postRequest("newComment", {
+            postId: this.props.postId,
+            body: event.target.querySelector("input").value
+        }, (post) => {
+            this.setState({
+                post: post
+            })
+        })
+    }
+
+    handleReplySubmit(event) {
+        event.preventDefault()
+        this.postRequest("newReply", {
+            postId: this.props.postId,
+            commentId: event.target.getAttribute("commentId"),
+            body: event.target.querySelector("input").value
+        })
+    }
+
     render() {
         return <div class="container">
             <div class="row">
                 <div class="col-3 col-sm-1 h-100"><img src="images/gump.jpg" class="img-thumbnail"></img></div>
                 <div class="col-11">
-                    <p class="strong">{this.state.post.body}</p>
+                    <p class="strong">{this.state.post.authorId}</p>
                     <p class="small">{this.state.post.date}</p>
                 </div>
             </div>
@@ -78,7 +119,7 @@ class Post extends React.Component{
                     <a>{this.state.post.comments.length}</a>
                 </div>
             </div>
-            <CommentSection isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
+            <CommentSection handleCommentSubmit={this.handleCommentSubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
         </div>
     }
 }
@@ -95,7 +136,21 @@ class CommentSection extends React.Component {
 
     render() {
         if (this.props.isCommentToggled) {
-            return this.commentList()
+            return <div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-inline" onSubmit={this.props.handleCommentSubmit}>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Your Comment here..."></input>
+                                </div>
+                                <button type="submit" class="btn">submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {this.commentList()}
+            </div>
         }
         return <div>
             blank
@@ -112,10 +167,44 @@ class Comment extends React.Component {
     }
 
     render() {
-        return <div>
-            {this.props.comment.body}
+        return <div class="container" commentid={this.props.comment._id}>
+            <div class="row">
+                <div class="col">
+                    <h6>{this.props.comment.authorId}</h6>
+                    <p class="small">{this.props.comment.body}</p>
+                    <button type="button" class="btn">like</button>
+                    <button type="button" class="btn">reply</button>
+                </div>
+            </div>
         </div>
     }
 }
 
-ReactDOM.render(<Post />, document.querySelector("#postBoard"))
+var postList = [];
+
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    console.log('DOM fully loaded and parsed');
+    if (postList.length === 0) {
+        const XHR = new XMLHttpRequest()
+
+        XHR.addEventListener('load', function(e) {
+            postList = JSON.parse(XHR.response).postList
+            for (i=0; i<5; i++) {
+                const post = document.createElement("div")
+                post.setAttribute("id", postList[i])
+                document.querySelector("#postBoard").appendChild(post)
+                ReactDOM.render(<Post postId={postList[i]} />, document.getElementById(postList[i]))
+            }
+        });
+
+        XHR.addEventListener('error', function(e) {
+            alert( 'unable to get post list' );
+        } );
+
+        XHR.open( 'GET', '/posts/postList');
+        XHR.send(null);
+    }
+});
+
+// ReactDOM.render(<Post postId="613a0d97bd4dbb032efd8100" />, document.querySelector("#postBoard"))

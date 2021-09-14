@@ -17,6 +17,7 @@ var Post = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
 
         _this.commentToggle = _this.commentToggle.bind(_this);
+        _this.handleCommentSubmit = _this.handleCommentSubmit.bind(_this);
         _this.state = {
             isPostReceived: false,
             isCommentToggled: false,
@@ -43,12 +44,11 @@ var Post = function (_React$Component) {
             });
         }
     }, {
-        key: "query",
-        value: function query(callback) {
+        key: "getRequest",
+        value: function getRequest(callback) {
             var XHR = new XMLHttpRequest();
 
             XHR.addEventListener('load', function (e) {
-
                 callback(JSON.parse(XHR.response));
             });
 
@@ -56,15 +56,36 @@ var Post = function (_React$Component) {
                 alert('Oops! Something went wrong.');
             });
 
-            XHR.open('GET', '/posts/?postId=' + "613a0d97bd4dbb032efd8100");
+            XHR.open('GET', '/posts/?postId=' + this.props.postId);
             XHR.send(null);
+        }
+    }, {
+        key: "postRequest",
+        value: function postRequest(url, data, callback) {
+            var XHR = new XMLHttpRequest();
+            var formData = new FormData();
+
+            for (key in data) {
+                formData.append(key, data[key]);
+            }
+
+            XHR.addEventListener('load', function (e) {
+                callback(JSON.parse(XHR.response));
+            });
+
+            XHR.addEventListener('error', function (e) {
+                alert('Oops! Something went wrong.');
+            });
+
+            XHR.open('POST', '/posts/' + url);
+            XHR.send(formData);
         }
     }, {
         key: "loadToBlock",
         value: function loadToBlock() {
             var _this2 = this;
 
-            this.query(function (post) {
+            this.getRequest(function (post) {
                 _this2.setState({
                     post: post
                 });
@@ -74,6 +95,32 @@ var Post = function (_React$Component) {
         key: "componentDidMount",
         value: function componentDidMount() {
             this.loadToBlock();
+        }
+    }, {
+        key: "handleCommentSubmit",
+        value: function handleCommentSubmit(event) {
+            var _this3 = this;
+
+            event.preventDefault();
+            console.log("submit comment pressed");
+            this.postRequest("newComment", {
+                postId: this.props.postId,
+                body: event.target.querySelector("input").value
+            }, function (post) {
+                _this3.setState({
+                    post: post
+                });
+            });
+        }
+    }, {
+        key: "handleReplySubmit",
+        value: function handleReplySubmit(event) {
+            event.preventDefault();
+            this.postRequest("newReply", {
+                postId: this.props.postId,
+                commentId: event.target.getAttribute("commentId"),
+                body: event.target.querySelector("input").value
+            });
         }
     }, {
         key: "render",
@@ -95,7 +142,7 @@ var Post = function (_React$Component) {
                         React.createElement(
                             "p",
                             { "class": "strong" },
-                            this.state.post.body
+                            this.state.post.authorId
                         ),
                         React.createElement(
                             "p",
@@ -145,7 +192,7 @@ var Post = function (_React$Component) {
                         )
                     )
                 ),
-                React.createElement(CommentSection, { isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
+                React.createElement(CommentSection, { handleCommentSubmit: this.handleCommentSubmit, isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
             );
         }
     }]);
@@ -159,10 +206,10 @@ var CommentSection = function (_React$Component2) {
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        var _this3 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
 
-        _this3.commentList = _this3.commentList.bind(_this3);
-        return _this3;
+        _this4.commentList = _this4.commentList.bind(_this4);
+        return _this4;
     }
 
     _createClass(CommentSection, [{
@@ -176,7 +223,37 @@ var CommentSection = function (_React$Component2) {
         key: "render",
         value: function render() {
             if (this.props.isCommentToggled) {
-                return this.commentList();
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { "class": "container" },
+                        React.createElement(
+                            "div",
+                            { "class": "row" },
+                            React.createElement(
+                                "div",
+                                { "class": "col" },
+                                React.createElement(
+                                    "form",
+                                    { "class": "form-inline", onSubmit: this.props.handleCommentSubmit },
+                                    React.createElement(
+                                        "div",
+                                        { "class": "form-group" },
+                                        React.createElement("input", { "class": "form-control", placeholder: "Your Comment here..." })
+                                    ),
+                                    React.createElement(
+                                        "button",
+                                        { type: "submit", "class": "btn" },
+                                        "submit"
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    this.commentList()
+                );
             }
             return React.createElement(
                 "div",
@@ -195,12 +272,12 @@ var Comment = function (_React$Component3) {
     function Comment(props) {
         _classCallCheck(this, Comment);
 
-        var _this4 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
 
-        _this4.state = {
-            comment: _this4.props.comment
+        _this5.state = {
+            comment: _this5.props.comment
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(Comment, [{
@@ -208,8 +285,35 @@ var Comment = function (_React$Component3) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
-                this.props.comment.body
+                { "class": "container", commentid: this.props.comment._id },
+                React.createElement(
+                    "div",
+                    { "class": "row" },
+                    React.createElement(
+                        "div",
+                        { "class": "col" },
+                        React.createElement(
+                            "h6",
+                            null,
+                            this.props.comment.authorId
+                        ),
+                        React.createElement(
+                            "p",
+                            { "class": "small" },
+                            this.props.comment.body
+                        ),
+                        React.createElement(
+                            "button",
+                            { type: "button", "class": "btn" },
+                            "like"
+                        ),
+                        React.createElement(
+                            "button",
+                            { type: "button", "class": "btn" },
+                            "reply"
+                        )
+                    )
+                )
             );
         }
     }]);
@@ -217,4 +321,30 @@ var Comment = function (_React$Component3) {
     return Comment;
 }(React.Component);
 
-ReactDOM.render(React.createElement(Post, null), document.querySelector("#postBoard"));
+var postList = [];
+
+window.addEventListener('DOMContentLoaded', function (event) {
+    console.log('DOM fully loaded and parsed');
+    if (postList.length === 0) {
+        var XHR = new XMLHttpRequest();
+
+        XHR.addEventListener('load', function (e) {
+            postList = JSON.parse(XHR.response).postList;
+            for (i = 0; i < 5; i++) {
+                var post = document.createElement("div");
+                post.setAttribute("id", postList[i]);
+                document.querySelector("#postBoard").appendChild(post);
+                ReactDOM.render(React.createElement(Post, { postId: postList[i] }), document.getElementById(postList[i]));
+            }
+        });
+
+        XHR.addEventListener('error', function (e) {
+            alert('unable to get post list');
+        });
+
+        XHR.open('GET', '/posts/postList');
+        XHR.send(null);
+    }
+});
+
+// ReactDOM.render(<Post postId="613a0d97bd4dbb032efd8100" />, document.querySelector("#postBoard"))

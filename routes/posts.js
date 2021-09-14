@@ -21,6 +21,12 @@ router
         })
 })
 
+router
+    .route("/postList")
+    .get((req, res) => {
+        res.json({postList: cache.getPostList()})
+})
+
 
 router
     .route("/newPost")
