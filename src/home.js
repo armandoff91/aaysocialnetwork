@@ -89,11 +89,18 @@ class Post extends React.Component{
     }
 
     handleReplySubmit(event) {
+
         event.preventDefault()
+        alert("submit reply pressed")
+        console.log(event.target)
         this.postRequest("newReply", {
             postId: this.props.postId,
-            commentId: event.target.getAttribute("commentId"),
+            commentId: event.target.getAttribute("commentid"),
             body: event.target.querySelector("input").value
+        }, (post) => {
+            this.setState({
+                post:post
+            })
         })
     }
 
@@ -119,7 +126,7 @@ class Post extends React.Component{
                     <a>{this.state.post.comments.length}</a>
                 </div>
             </div>
-            <CommentSection handleCommentSubmit={this.handleCommentSubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
+            <CommentSection handleCommentSubmit={this.handleCommentSubmit} handleReplySubmit={this.props.handleReplySubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
         </div>
     }
 }
@@ -131,7 +138,7 @@ class CommentSection extends React.Component {
     }
 
     commentList() {
-        return this.props.commentList.map((comment) => <Comment key={comment._id} comment={comment}/>)
+        return this.props.commentList.map((comment) => <Comment key={comment._id} comment={comment} handleReplySubmit={this.props.handleReplySubmit}/>)
     }
 
     render() {
@@ -162,8 +169,16 @@ class Comment extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            comment : this.props.comment
+            isReplyToggled: false,
         }
+        this.replyToggle = this.replyToggle.bind(this)
+    }
+
+
+    replyToggle() {
+        this.setState({
+            isReplyToggled: this.state.isReplyToggled === false? true : false 
+        })
     }
 
     render() {
@@ -173,13 +188,59 @@ class Comment extends React.Component {
                     <h6>{this.props.comment.authorId}</h6>
                     <p class="small">{this.props.comment.body}</p>
                     <button type="button" class="btn">like</button>
-                    <button type="button" class="btn">reply</button>
+                    <button type="button" class="btn" onClick={this.replyToggle}>reply</button>
                 </div>
             </div>
+            <ReplySection commentid={this.props.comment._id} isReplyToggled={this.state.isReplyToggled} replyList={this.props.comment.replies} handleReplySubmit={this.props.handleReplySubmit}/>
         </div>
     }
 }
 
+class ReplySection extends React.Component {
+    constructor(props) {
+        super(props)
+        this.replyList = this.replyList.bind(this)
+    }
+
+    replyList() {
+        return this.props.replyList.map((reply) => <Reply key={reply._id} reply={reply}/>)
+    }
+
+    render() {
+        if (this.props.isReplyToggled) {
+            return <div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-inline" onSubmit={this.props.handleReplySubmit} commentid={this.props.commentid}>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Your Reply here..."></input>
+                                </div>
+                                <button type="submit" class="btn">submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {this.replyList()}
+            </div>
+        }
+        return <div>
+            reply section collapsed
+        </div>
+    }
+}
+
+class Reply extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    render() {
+        return <div>
+            {this.props.reply.body}
+        </div>
+    }
+}
 var postList = [];
 
 

@@ -115,11 +115,19 @@ var Post = function (_React$Component) {
     }, {
         key: "handleReplySubmit",
         value: function handleReplySubmit(event) {
+            var _this4 = this;
+
             event.preventDefault();
+            alert("submit reply pressed");
+            console.log(event.target);
             this.postRequest("newReply", {
                 postId: this.props.postId,
-                commentId: event.target.getAttribute("commentId"),
+                commentId: event.target.getAttribute("commentid"),
                 body: event.target.querySelector("input").value
+            }, function (post) {
+                _this4.setState({
+                    post: post
+                });
             });
         }
     }, {
@@ -192,7 +200,7 @@ var Post = function (_React$Component) {
                         )
                     )
                 ),
-                React.createElement(CommentSection, { handleCommentSubmit: this.handleCommentSubmit, isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
+                React.createElement(CommentSection, { handleCommentSubmit: this.handleCommentSubmit, handleReplySubmit: this.props.handleReplySubmit, isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
             );
         }
     }]);
@@ -206,17 +214,19 @@ var CommentSection = function (_React$Component2) {
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        var _this4 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
 
-        _this4.commentList = _this4.commentList.bind(_this4);
-        return _this4;
+        _this5.commentList = _this5.commentList.bind(_this5);
+        return _this5;
     }
 
     _createClass(CommentSection, [{
         key: "commentList",
         value: function commentList() {
+            var _this6 = this;
+
             return this.props.commentList.map(function (comment) {
-                return React.createElement(Comment, { key: comment._id, comment: comment });
+                return React.createElement(Comment, { key: comment._id, comment: comment, handleReplySubmit: _this6.props.handleReplySubmit });
             });
         }
     }, {
@@ -272,15 +282,23 @@ var Comment = function (_React$Component3) {
     function Comment(props) {
         _classCallCheck(this, Comment);
 
-        var _this5 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+        var _this7 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
 
-        _this5.state = {
-            comment: _this5.props.comment
+        _this7.state = {
+            isReplyToggled: false
         };
-        return _this5;
+        _this7.replyToggle = _this7.replyToggle.bind(_this7);
+        return _this7;
     }
 
     _createClass(Comment, [{
+        key: "replyToggle",
+        value: function replyToggle() {
+            this.setState({
+                isReplyToggled: this.state.isReplyToggled === false ? true : false
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -309,16 +327,106 @@ var Comment = function (_React$Component3) {
                         ),
                         React.createElement(
                             "button",
-                            { type: "button", "class": "btn" },
+                            { type: "button", "class": "btn", onClick: this.replyToggle },
                             "reply"
                         )
                     )
-                )
+                ),
+                React.createElement(ReplySection, { commentid: this.props.comment._id, isReplyToggled: this.state.isReplyToggled, replyList: this.props.comment.replies, handleReplySubmit: this.props.handleReplySubmit })
             );
         }
     }]);
 
     return Comment;
+}(React.Component);
+
+var ReplySection = function (_React$Component4) {
+    _inherits(ReplySection, _React$Component4);
+
+    function ReplySection(props) {
+        _classCallCheck(this, ReplySection);
+
+        var _this8 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
+
+        _this8.replyList = _this8.replyList.bind(_this8);
+        return _this8;
+    }
+
+    _createClass(ReplySection, [{
+        key: "replyList",
+        value: function replyList() {
+            return this.props.replyList.map(function (reply) {
+                return React.createElement(Reply, { key: reply._id, reply: reply });
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            if (this.props.isReplyToggled) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { "class": "container" },
+                        React.createElement(
+                            "div",
+                            { "class": "row" },
+                            React.createElement(
+                                "div",
+                                { "class": "col" },
+                                React.createElement(
+                                    "form",
+                                    { "class": "form-inline", onSubmit: this.props.handleReplySubmit, commentid: this.props.commentid },
+                                    React.createElement(
+                                        "div",
+                                        { "class": "form-group" },
+                                        React.createElement("input", { "class": "form-control", placeholder: "Your Reply here..." })
+                                    ),
+                                    React.createElement(
+                                        "button",
+                                        { type: "submit", "class": "btn" },
+                                        "submit"
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    this.replyList()
+                );
+            }
+            return React.createElement(
+                "div",
+                null,
+                "reply section collapsed"
+            );
+        }
+    }]);
+
+    return ReplySection;
+}(React.Component);
+
+var Reply = function (_React$Component5) {
+    _inherits(Reply, _React$Component5);
+
+    function Reply(props) {
+        _classCallCheck(this, Reply);
+
+        return _possibleConstructorReturn(this, (Reply.__proto__ || Object.getPrototypeOf(Reply)).call(this, props));
+    }
+
+    _createClass(Reply, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                this.props.reply.body
+            );
+        }
+    }]);
+
+    return Reply;
 }(React.Component);
 
 var postList = [];
