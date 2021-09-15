@@ -4,8 +4,9 @@ class Post extends React.Component{
     constructor(props) {
         super(props)
         this.commentToggle = this.commentToggle.bind(this)
-        this.handleCommentSubmit = this.handleCommentSubmit.bind(this)
-        this.handleReplySubmit = this.handleReplySubmit.bind(this)
+        for (key in this.handleFormSubmit) {
+            this.handleFormSubmit[key] = this.handleFormSubmit[key].bind(this)
+        }
         this.state = {
             isPostReceived: false,
             isCommentToggled: false,
@@ -18,7 +19,7 @@ class Post extends React.Component{
                 "authorId":null,
                 "title": null,
                 "body":null,
-                "comments":[]
+                "comments":["blank"]
             }
         }
     }
@@ -62,7 +63,7 @@ class Post extends React.Component{
 
         XHR.open('POST', '/posts/' + url);
         XHR.send(formData);
-    }
+    } 
 
     loadToBlock() {
         this.getRequest((post) => {
@@ -76,33 +77,32 @@ class Post extends React.Component{
         this.loadToBlock()
     }
 
-    handleCommentSubmit(event) {
-        event.preventDefault()
-        console.log("submit comment pressed")
-        this.postRequest("newComment", {
-            postId: this.props.postId,
-            body: event.target.querySelector("input").value
-        }, (post) => {
-            this.setState({
-                post: post
+    handleFormSubmit = {
+        newComment: function (event) {
+            event.preventDefault()
+            this.postRequest("newComment", {
+                postId: this.props.postId,
+                body: event.target.querySelector("input").value
+            }, (post) => {
+                this.setState({
+                    post: post
+                })
             })
-        })
-    }
+        },
 
-    handleReplySubmit(event) {
-
-        event.preventDefault()
-        alert("submit reply pressed")
-        console.log(event.target)
-        this.postRequest("newReply", {
-            postId: this.props.postId,
-            commentId: event.target.getAttribute("commentid"),
-            body: event.target.querySelector("input").value
-        }, (post) => {
-            this.setState({
-                post:post
+        newReply: function (event)  {
+            event.preventDefault()
+            console.log("submit reply pressed")
+            this.postRequest("newReply", {
+                postId: this.props.postId,
+                commentId: event.target.getAttribute("commentid"),
+                body: event.target.querySelector("input").value
+            }, (post) => {
+                this.setState({
+                    post: post
+                })
             })
-        })
+        }, 
     }
 
     render() {
@@ -127,7 +127,7 @@ class Post extends React.Component{
                     <a>{this.state.post.comments.length}</a>
                 </div>
             </div>
-            <CommentSection handleCommentSubmit={this.handleCommentSubmit} handleReplySubmit={this.props.handleReplySubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
+            <CommentSection handleFormSubmit={this.handleFormSubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments}/>
         </div>
     }
 }
@@ -139,7 +139,7 @@ class CommentSection extends React.Component {
     }
 
     commentList() {
-        return this.props.commentList.map((comment) => <Comment key={comment._id} comment={comment} handleReplySubmit={this.props.handleReplySubmit}/>)
+        return this.props.commentList.map((comment) => <Comment key={comment._id} comment={comment} handleFormSubmit={this.props.handleFormSubmit}/>)
     }
 
     render() {
@@ -148,7 +148,7 @@ class CommentSection extends React.Component {
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <form class="form-inline" onSubmit={this.props.handleCommentSubmit}>
+                            <form class="form-inline" onSubmit={this.props.handleFormSubmit.newComment}>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Your Comment here..."></input>
                                 </div>
@@ -192,7 +192,7 @@ class Comment extends React.Component {
                     <button type="button" class="btn" onClick={this.replyToggle}>reply</button>
                 </div>
             </div>
-            <ReplySection commentid={this.props.comment._id} isReplyToggled={this.state.isReplyToggled} replyList={this.props.comment.replies} handleReplySubmit={this.props.handleReplySubmit}/>
+            <ReplySection commentid={this.props.comment._id} isReplyToggled={this.state.isReplyToggled} replyList={this.props.comment.replies} handleFormSubmit={this.props.handleFormSubmit}/>
         </div>
     }
 }
@@ -204,7 +204,7 @@ class ReplySection extends React.Component {
     }
 
     replyList() {
-        return this.props.replyList.map((reply) => <Reply key={reply._id} reply={reply}/>)
+        return this.props.replyList.map((reply) => <Reply key={reply._id} reply={reply} commentid={this.props.commentid} replyid={reply._id}/>)
     }
 
     render() {
@@ -213,7 +213,7 @@ class ReplySection extends React.Component {
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <form class="form-inline" onSubmit={this.props.handleReplySubmit} commentid={this.props.commentid}>
+                            <form class="form-inline" onSubmit={this.props.handleFormSubmit.newReply} commentid={this.props.commentid}>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Your Reply here..."></input>
                                 </div>
@@ -237,7 +237,7 @@ class Reply extends React.Component {
     }
 
     render() {
-        return <div>
+        return <div commentid={this.props.commentid} replyid={this.props.reply._id}>
             {this.props.reply.body}
         </div>
     }
@@ -268,5 +268,3 @@ window.addEventListener('DOMContentLoaded', (event) => {
         XHR.send(null);
     }
 });
-
-// ReactDOM.render(<Post postId="613a0d97bd4dbb032efd8100" />, document.querySelector("#postBoard"))

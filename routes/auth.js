@@ -60,8 +60,7 @@ router
             User.countDocuments({username: entry.username}, (err, count) => {
                 if (count === 0) {
                     newUser.save().then((newUser) => {
-                        res.redirect("auth/login")
-                        // res.json({msg: "new user saved"})
+                        res.json({msg: "new user saved"})
                     }).catch((err) => {
                         console.log("user save failed, user info invalid")
                         res.json({msg: "User information incomplete/invalid"})

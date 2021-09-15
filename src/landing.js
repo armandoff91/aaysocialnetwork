@@ -66,7 +66,7 @@ class Register extends React.Component{
     render() {
         return <form onSubmit={this.submit}>
         <fieldset>
-            <legend>Personalia:</legend>
+            <legend>Register</legend>
             <label>Username:</label>
             <input id="username" type="text"></input>
             <br></br>
@@ -130,7 +130,7 @@ class Login extends React.Component {
     render() {
         return <form onSubmit={this.submit}>
         <fieldset>
-            <legend>Personalia:</legend>
+            <legend>Login</legend>
             <label>Username:</label>
             <input id="username" type="text"></input>
             <br></br>

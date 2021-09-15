@@ -16,9 +16,42 @@ var Post = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
 
+        _this.handleFormSubmit = {
+            newComment: function newComment(event) {
+                var _this2 = this;
+
+                event.preventDefault();
+                this.postRequest("newComment", {
+                    postId: this.props.postId,
+                    body: event.target.querySelector("input").value
+                }, function (post) {
+                    _this2.setState({
+                        post: post
+                    });
+                });
+            },
+
+            newReply: function newReply(event) {
+                var _this3 = this;
+
+                event.preventDefault();
+                console.log("submit reply pressed");
+                this.postRequest("newReply", {
+                    postId: this.props.postId,
+                    commentId: event.target.getAttribute("commentid"),
+                    body: event.target.querySelector("input").value
+                }, function (post) {
+                    _this3.setState({
+                        post: post
+                    });
+                });
+            }
+        };
+
         _this.commentToggle = _this.commentToggle.bind(_this);
-        _this.handleCommentSubmit = _this.handleCommentSubmit.bind(_this);
-        _this.handleReplySubmit = _this.handleReplySubmit.bind(_this);
+        for (key in _this.handleFormSubmit) {
+            _this.handleFormSubmit[key] = _this.handleFormSubmit[key].bind(_this);
+        }
         _this.state = {
             isPostReceived: false,
             isCommentToggled: false,
@@ -31,7 +64,7 @@ var Post = function (_React$Component) {
                 "authorId": null,
                 "title": null,
                 "body": null,
-                "comments": []
+                "comments": ["blank"]
             }
         };
         return _this;
@@ -84,10 +117,10 @@ var Post = function (_React$Component) {
     }, {
         key: "loadToBlock",
         value: function loadToBlock() {
-            var _this2 = this;
+            var _this4 = this;
 
             this.getRequest(function (post) {
-                _this2.setState({
+                _this4.setState({
                     post: post
                 });
             });
@@ -96,40 +129,6 @@ var Post = function (_React$Component) {
         key: "componentDidMount",
         value: function componentDidMount() {
             this.loadToBlock();
-        }
-    }, {
-        key: "handleCommentSubmit",
-        value: function handleCommentSubmit(event) {
-            var _this3 = this;
-
-            event.preventDefault();
-            console.log("submit comment pressed");
-            this.postRequest("newComment", {
-                postId: this.props.postId,
-                body: event.target.querySelector("input").value
-            }, function (post) {
-                _this3.setState({
-                    post: post
-                });
-            });
-        }
-    }, {
-        key: "handleReplySubmit",
-        value: function handleReplySubmit(event) {
-            var _this4 = this;
-
-            event.preventDefault();
-            alert("submit reply pressed");
-            console.log(event.target);
-            this.postRequest("newReply", {
-                postId: this.props.postId,
-                commentId: event.target.getAttribute("commentid"),
-                body: event.target.querySelector("input").value
-            }, function (post) {
-                _this4.setState({
-                    post: post
-                });
-            });
         }
     }, {
         key: "render",
@@ -201,7 +200,7 @@ var Post = function (_React$Component) {
                         )
                     )
                 ),
-                React.createElement(CommentSection, { handleCommentSubmit: this.handleCommentSubmit, handleReplySubmit: this.props.handleReplySubmit, isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
+                React.createElement(CommentSection, { handleFormSubmit: this.handleFormSubmit, isCommentToggled: this.state.isCommentToggled, commentList: this.state.post.comments })
             );
         }
     }]);
@@ -227,7 +226,7 @@ var CommentSection = function (_React$Component2) {
             var _this6 = this;
 
             return this.props.commentList.map(function (comment) {
-                return React.createElement(Comment, { key: comment._id, comment: comment, handleReplySubmit: _this6.props.handleReplySubmit });
+                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this6.props.handleFormSubmit });
             });
         }
     }, {
@@ -248,7 +247,7 @@ var CommentSection = function (_React$Component2) {
                                 { "class": "col" },
                                 React.createElement(
                                     "form",
-                                    { "class": "form-inline", onSubmit: this.props.handleCommentSubmit },
+                                    { "class": "form-inline", onSubmit: this.props.handleFormSubmit.newComment },
                                     React.createElement(
                                         "div",
                                         { "class": "form-group" },
@@ -333,7 +332,7 @@ var Comment = function (_React$Component3) {
                         )
                     )
                 ),
-                React.createElement(ReplySection, { commentid: this.props.comment._id, isReplyToggled: this.state.isReplyToggled, replyList: this.props.comment.replies, handleReplySubmit: this.props.handleReplySubmit })
+                React.createElement(ReplySection, { commentid: this.props.comment._id, isReplyToggled: this.state.isReplyToggled, replyList: this.props.comment.replies, handleFormSubmit: this.props.handleFormSubmit })
             );
         }
     }]);
@@ -356,8 +355,10 @@ var ReplySection = function (_React$Component4) {
     _createClass(ReplySection, [{
         key: "replyList",
         value: function replyList() {
+            var _this9 = this;
+
             return this.props.replyList.map(function (reply) {
-                return React.createElement(Reply, { key: reply._id, reply: reply });
+                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this9.props.commentid, replyid: reply._id });
             });
         }
     }, {
@@ -378,7 +379,7 @@ var ReplySection = function (_React$Component4) {
                                 { "class": "col" },
                                 React.createElement(
                                     "form",
-                                    { "class": "form-inline", onSubmit: this.props.handleReplySubmit, commentid: this.props.commentid },
+                                    { "class": "form-inline", onSubmit: this.props.handleFormSubmit.newReply, commentid: this.props.commentid },
                                     React.createElement(
                                         "div",
                                         { "class": "form-group" },
@@ -421,7 +422,7 @@ var Reply = function (_React$Component5) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { commentid: this.props.commentid, replyid: this.props.reply._id },
                 this.props.reply.body
             );
         }
@@ -455,5 +456,3 @@ window.addEventListener('DOMContentLoaded', function (event) {
         XHR.send(null);
     }
 });
-
-// ReactDOM.render(<Post postId="613a0d97bd4dbb032efd8100" />, document.querySelector("#postBoard"))

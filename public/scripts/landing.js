@@ -101,7 +101,7 @@ var Register = function (_React$Component2) {
                     React.createElement(
                         "legend",
                         null,
-                        "Personalia:"
+                        "Register"
                     ),
                     React.createElement(
                         "label",
@@ -209,7 +209,7 @@ var Login = function (_React$Component3) {
                     React.createElement(
                         "legend",
                         null,
-                        "Personalia:"
+                        "Login"
                     ),
                     React.createElement(
                         "label",

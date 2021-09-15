@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router()
-const Cache = require("../services/cache2")
+const Cache = require("../services/postCache")
 
 var cache = new Cache()
 

@@ -3,9 +3,9 @@ div {
 }
 
 h1 {
-    outline: 1px solid green
+    outline: 1px dotted green
 }
 
 p {
-    outline: 1px solid blue
+    outline: 1px dotted blue
 }
