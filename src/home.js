@@ -1,4 +1,50 @@
 console.log("home.js loaded")
+class NewPostSection extends React.Component{
+    constructor(props) {
+        super(props)
+        this.submitNewPost = this.submitNewPost.bind(this)
+    }
+
+    submitNewPost(event) {
+        event.preventDefault()
+        const XHR = new XMLHttpRequest()
+        var formData = new FormData()
+
+        formData.append("title", event.target.querySelector("#newPostTitle").value)
+        formData.append("body", event.target.querySelector("#newPostBody").value)
+
+        XHR.addEventListener('load', function(e) {
+            const post = document.createElement("div")
+            post.setAttribute("id", JSON.parse(XHR.response)._id)
+            document.querySelector("#pinnedPostBoard").appendChild(post)
+            ReactDOM.render(<Post postId={JSON.parse(XHR.response)._id} />, document.getElementById("" + JSON.parse(XHR.response)._id))
+        });
+
+        XHR.addEventListener('error', function(e) {
+            alert( 'Oops! Something went wrong.' );
+        } );
+
+        XHR.open('POST', '/posts/newPost');
+        XHR.send(formData);
+    }
+
+    render() {
+        return <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h6>New Post</h6>
+                    <form class="form-inline" onSubmit={this.submitNewPost}>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Title" id="newPostTitle"></input>
+                            <input class="form-control" placeholder="What's on your mind?" id="newPostBody"></input>
+                        </div>
+                        <button type="submit" class="btn">submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
 
 class Post extends React.Component{
     constructor(props) {
@@ -242,22 +288,30 @@ class Reply extends React.Component {
         </div>
     }
 }
+var pinnedPostList = [];
 var postList = [];
-
+var currentPostListPosition = 0;
+const loadPost = (startingPosition, numberOfPosts) => {
+    for (i = 0; i < numberOfPosts; i++) {
+        const post = document.createElement("div")
+        post.setAttribute("id", postList[startingPosition + i])
+        document.querySelector("#postBoard").appendChild(post)
+        ReactDOM.render(<Post postId={postList[startingPosition + i]} />, document.getElementById(postList[startingPosition + i]))
+    }
+    currentPostListPosition += numberOfPosts
+}
 
 window.addEventListener('DOMContentLoaded', (event) => {
     console.log('DOM fully loaded and parsed');
+
+    ReactDOM.render(<NewPostSection />, document.querySelector("#newPostSection"))
+
     if (postList.length === 0) {
         const XHR = new XMLHttpRequest()
 
         XHR.addEventListener('load', function(e) {
             postList = JSON.parse(XHR.response).postList
-            for (i=0; i<5; i++) {
-                const post = document.createElement("div")
-                post.setAttribute("id", postList[i])
-                document.querySelector("#postBoard").appendChild(post)
-                ReactDOM.render(<Post postId={postList[i]} />, document.getElementById(postList[i]))
-            }
+            loadPost(0, 5)
         });
 
         XHR.addEventListener('error', function(e) {
@@ -268,3 +322,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
         XHR.send(null);
     }
 });
+
+
+window.addEventListener("scroll", (event) => {
+    
+    if ((window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight * 0.99)) {
+        if (currentPostListPosition < postList.length) {
+            loadPost(currentPostListPosition, 5)    
+        } else {
+            alert("Post limit exceeded, please refresh")
+        }
+    }
+     
+})

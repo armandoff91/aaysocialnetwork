@@ -24,7 +24,7 @@ const commentSchema = new mongoose.Schema({
 const postSchema = new mongoose.Schema({
     title:  {type: String, default: null},
     authorId: {required: true, type: String},
-    body:   String,
+    body:   {required: true, type: String},
     comments: [commentSchema],
     date: { type: Number, default: 0 },
     hidden: {type: Boolean, default: false},
@@ -35,6 +35,8 @@ const postSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   username: {type: String, required: true},
+  firstName: {type: String, required: true},
+  lastName: {type: String, required: true},
   email: {type: String, required: true},
   password: {type: String, required: true},
   dateOfSignup: {type: Number, required: true}

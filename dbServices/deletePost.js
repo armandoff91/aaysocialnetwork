@@ -4,10 +4,6 @@ const mongoose = require("mongoose")
 
 const Post = mongoose.model("Post", postSchema)
 
-
-//update takes a post's object id and body
-
-
 async function deletePost(postId, callback) {
 
     const postCount = await Post.countDocuments({_id: postId})

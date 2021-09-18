@@ -113,6 +113,19 @@ var Register = function (_React$Component2) {
                     React.createElement(
                         "label",
                         null,
+                        "First Name:"
+                    ),
+                    React.createElement("input", { id: "firstName", type: "text" }),
+                    React.createElement(
+                        "label",
+                        null,
+                        "Last Name:"
+                    ),
+                    React.createElement("input", { id: "lastName", type: "text" }),
+                    React.createElement("br", null),
+                    React.createElement(
+                        "label",
+                        null,
                         "Email:"
                     ),
                     React.createElement("input", { id: "email", type: "text" }),

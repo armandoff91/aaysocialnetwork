@@ -32,15 +32,17 @@ router
     .route("/newPost")
     .post((req, res) => {
         console.log("new post request received")
-        const newPost =  {
-            authorId: req.user,
-            title: req.body.title,
-            body: req.body.body
-        }           
-        cache.createPost(newPost,(savedPost) => {
-            console.log("new post saved")
-            res.send(JSON.stringify(savedPost))
-        })
+        if (req.body.body.length > 0) {
+            const newPost =  {
+                authorId: req.user,
+                title: req.body.title,
+                body: req.body.body
+            }
+            cache.createPost(newPost,(savedPost) => {
+                console.log("new post saved")
+                res.send(JSON.stringify(savedPost))
+            })
+        }
 })
 
 router

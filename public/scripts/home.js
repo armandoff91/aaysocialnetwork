@@ -8,31 +8,108 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 console.log("home.js loaded");
 
-var Post = function (_React$Component) {
-    _inherits(Post, _React$Component);
+var NewPostSection = function (_React$Component) {
+    _inherits(NewPostSection, _React$Component);
+
+    function NewPostSection(props) {
+        _classCallCheck(this, NewPostSection);
+
+        var _this = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
+
+        _this.submitNewPost = _this.submitNewPost.bind(_this);
+        return _this;
+    }
+
+    _createClass(NewPostSection, [{
+        key: "submitNewPost",
+        value: function submitNewPost(event) {
+            event.preventDefault();
+            var XHR = new XMLHttpRequest();
+            var formData = new FormData();
+
+            formData.append("title", event.target.querySelector("#newPostTitle").value);
+            formData.append("body", event.target.querySelector("#newPostBody").value);
+
+            XHR.addEventListener('load', function (e) {
+                var post = document.createElement("div");
+                post.setAttribute("id", JSON.parse(XHR.response)._id);
+                document.querySelector("#pinnedPostBoard").appendChild(post);
+                ReactDOM.render(React.createElement(Post, { postId: JSON.parse(XHR.response)._id }), document.getElementById("" + JSON.parse(XHR.response)._id));
+            });
+
+            XHR.addEventListener('error', function (e) {
+                alert('Oops! Something went wrong.');
+            });
+
+            XHR.open('POST', '/posts/newPost');
+            XHR.send(formData);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { "class": "container" },
+                React.createElement(
+                    "div",
+                    { "class": "row" },
+                    React.createElement(
+                        "div",
+                        { "class": "col" },
+                        React.createElement(
+                            "h6",
+                            null,
+                            "New Post"
+                        ),
+                        React.createElement(
+                            "form",
+                            { "class": "form-inline", onSubmit: this.submitNewPost },
+                            React.createElement(
+                                "div",
+                                { "class": "form-group" },
+                                React.createElement("input", { "class": "form-control", placeholder: "Title", id: "newPostTitle" }),
+                                React.createElement("input", { "class": "form-control", placeholder: "What's on your mind?", id: "newPostBody" })
+                            ),
+                            React.createElement(
+                                "button",
+                                { type: "submit", "class": "btn" },
+                                "submit"
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return NewPostSection;
+}(React.Component);
+
+var Post = function (_React$Component2) {
+    _inherits(Post, _React$Component2);
 
     function Post(props) {
         _classCallCheck(this, Post);
 
-        var _this = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
 
-        _this.handleFormSubmit = {
+        _this2.handleFormSubmit = {
             newComment: function newComment(event) {
-                var _this2 = this;
+                var _this3 = this;
 
                 event.preventDefault();
                 this.postRequest("newComment", {
                     postId: this.props.postId,
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this2.setState({
+                    _this3.setState({
                         post: post
                     });
                 });
             },
 
             newReply: function newReply(event) {
-                var _this3 = this;
+                var _this4 = this;
 
                 event.preventDefault();
                 console.log("submit reply pressed");
@@ -41,18 +118,18 @@ var Post = function (_React$Component) {
                     commentId: event.target.getAttribute("commentid"),
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this3.setState({
+                    _this4.setState({
                         post: post
                     });
                 });
             }
         };
 
-        _this.commentToggle = _this.commentToggle.bind(_this);
-        for (key in _this.handleFormSubmit) {
-            _this.handleFormSubmit[key] = _this.handleFormSubmit[key].bind(_this);
+        _this2.commentToggle = _this2.commentToggle.bind(_this2);
+        for (key in _this2.handleFormSubmit) {
+            _this2.handleFormSubmit[key] = _this2.handleFormSubmit[key].bind(_this2);
         }
-        _this.state = {
+        _this2.state = {
             isPostReceived: false,
             isCommentToggled: false,
             post: {
@@ -67,7 +144,7 @@ var Post = function (_React$Component) {
                 "comments": ["blank"]
             }
         };
-        return _this;
+        return _this2;
     }
 
     _createClass(Post, [{
@@ -117,10 +194,10 @@ var Post = function (_React$Component) {
     }, {
         key: "loadToBlock",
         value: function loadToBlock() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.getRequest(function (post) {
-                _this4.setState({
+                _this5.setState({
                     post: post
                 });
             });
@@ -208,25 +285,25 @@ var Post = function (_React$Component) {
     return Post;
 }(React.Component);
 
-var CommentSection = function (_React$Component2) {
-    _inherits(CommentSection, _React$Component2);
+var CommentSection = function (_React$Component3) {
+    _inherits(CommentSection, _React$Component3);
 
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        var _this5 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
 
-        _this5.commentList = _this5.commentList.bind(_this5);
-        return _this5;
+        _this6.commentList = _this6.commentList.bind(_this6);
+        return _this6;
     }
 
     _createClass(CommentSection, [{
         key: "commentList",
         value: function commentList() {
-            var _this6 = this;
+            var _this7 = this;
 
             return this.props.commentList.map(function (comment) {
-                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this6.props.handleFormSubmit });
+                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this7.props.handleFormSubmit });
             });
         }
     }, {
@@ -276,19 +353,19 @@ var CommentSection = function (_React$Component2) {
     return CommentSection;
 }(React.Component);
 
-var Comment = function (_React$Component3) {
-    _inherits(Comment, _React$Component3);
+var Comment = function (_React$Component4) {
+    _inherits(Comment, _React$Component4);
 
     function Comment(props) {
         _classCallCheck(this, Comment);
 
-        var _this7 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+        var _this8 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
 
-        _this7.state = {
+        _this8.state = {
             isReplyToggled: false
         };
-        _this7.replyToggle = _this7.replyToggle.bind(_this7);
-        return _this7;
+        _this8.replyToggle = _this8.replyToggle.bind(_this8);
+        return _this8;
     }
 
     _createClass(Comment, [{
@@ -340,25 +417,25 @@ var Comment = function (_React$Component3) {
     return Comment;
 }(React.Component);
 
-var ReplySection = function (_React$Component4) {
-    _inherits(ReplySection, _React$Component4);
+var ReplySection = function (_React$Component5) {
+    _inherits(ReplySection, _React$Component5);
 
     function ReplySection(props) {
         _classCallCheck(this, ReplySection);
 
-        var _this8 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
 
-        _this8.replyList = _this8.replyList.bind(_this8);
-        return _this8;
+        _this9.replyList = _this9.replyList.bind(_this9);
+        return _this9;
     }
 
     _createClass(ReplySection, [{
         key: "replyList",
         value: function replyList() {
-            var _this9 = this;
+            var _this10 = this;
 
             return this.props.replyList.map(function (reply) {
-                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this9.props.commentid, replyid: reply._id });
+                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this10.props.commentid, replyid: reply._id });
             });
         }
     }, {
@@ -408,8 +485,8 @@ var ReplySection = function (_React$Component4) {
     return ReplySection;
 }(React.Component);
 
-var Reply = function (_React$Component5) {
-    _inherits(Reply, _React$Component5);
+var Reply = function (_React$Component6) {
+    _inherits(Reply, _React$Component6);
 
     function Reply(props) {
         _classCallCheck(this, Reply);
@@ -431,21 +508,30 @@ var Reply = function (_React$Component5) {
     return Reply;
 }(React.Component);
 
+var pinnedPostList = [];
 var postList = [];
+var currentPostListPosition = 0;
+var loadPost = function loadPost(startingPosition, numberOfPosts) {
+    for (i = 0; i < numberOfPosts; i++) {
+        var post = document.createElement("div");
+        post.setAttribute("id", postList[startingPosition + i]);
+        document.querySelector("#postBoard").appendChild(post);
+        ReactDOM.render(React.createElement(Post, { postId: postList[startingPosition + i] }), document.getElementById(postList[startingPosition + i]));
+    }
+    currentPostListPosition += numberOfPosts;
+};
 
 window.addEventListener('DOMContentLoaded', function (event) {
     console.log('DOM fully loaded and parsed');
+
+    ReactDOM.render(React.createElement(NewPostSection, null), document.querySelector("#newPostSection"));
+
     if (postList.length === 0) {
         var XHR = new XMLHttpRequest();
 
         XHR.addEventListener('load', function (e) {
             postList = JSON.parse(XHR.response).postList;
-            for (i = 0; i < 5; i++) {
-                var post = document.createElement("div");
-                post.setAttribute("id", postList[i]);
-                document.querySelector("#postBoard").appendChild(post);
-                ReactDOM.render(React.createElement(Post, { postId: postList[i] }), document.getElementById(postList[i]));
-            }
+            loadPost(0, 5);
         });
 
         XHR.addEventListener('error', function (e) {
@@ -454,5 +540,16 @@ window.addEventListener('DOMContentLoaded', function (event) {
 
         XHR.open('GET', '/posts/postList');
         XHR.send(null);
+    }
+});
+
+window.addEventListener("scroll", function (event) {
+
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight * 0.99) {
+        if (currentPostListPosition < postList.length) {
+            loadPost(currentPostListPosition, 5);
+        } else {
+            alert("Post limit exceeded, please refresh");
+        }
     }
 });

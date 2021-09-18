@@ -50,6 +50,8 @@ router
         const entry = {
             username: req.body.username,
             password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             email: req.body.email,
             dateOfSignup: Date.now()
         }
