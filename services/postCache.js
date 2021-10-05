@@ -29,7 +29,7 @@ class Cache {
     }
 
     getPostList() {
-        return Object.keys(this.body)
+        return Object.keys(this.body).map(v => [v, this.body[v].date, this.body[v].authorId, this.body[v].lastUpdate])
     }
 
     pushOne(object) {

@@ -511,12 +511,22 @@ var Reply = function (_React$Component6) {
 var pinnedPostList = [];
 var postList = [];
 var currentPostListPosition = 0;
+
+function sortPostListByDate() {
+    postList.sort(function (a, b) {
+        if (a[1] > b[1]) {
+            return -1;
+        }
+        return 1;
+    });
+}
+
 var loadPost = function loadPost(startingPosition, numberOfPosts) {
     for (i = 0; i < numberOfPosts; i++) {
         var post = document.createElement("div");
-        post.setAttribute("id", postList[startingPosition + i]);
+        post.setAttribute("id", postList[startingPosition + i][0]);
         document.querySelector("#postBoard").appendChild(post);
-        ReactDOM.render(React.createElement(Post, { postId: postList[startingPosition + i] }), document.getElementById(postList[startingPosition + i]));
+        ReactDOM.render(React.createElement(Post, { postId: postList[startingPosition + i][0] }), document.getElementById(postList[startingPosition + i][0]));
     }
     currentPostListPosition += numberOfPosts;
 };
@@ -531,6 +541,7 @@ window.addEventListener('DOMContentLoaded', function (event) {
 
         XHR.addEventListener('load', function (e) {
             postList = JSON.parse(XHR.response).postList;
+            sortPostListByDate();
             loadPost(0, 5);
         });
 

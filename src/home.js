@@ -291,12 +291,22 @@ class Reply extends React.Component {
 var pinnedPostList = [];
 var postList = [];
 var currentPostListPosition = 0;
+
+function sortPostListByDate() {
+    postList.sort((a, b) => {
+        if (a[1] > b[1]) {
+            return -1
+        }
+        return 1
+    })
+}
+
 const loadPost = (startingPosition, numberOfPosts) => {
     for (i = 0; i < numberOfPosts; i++) {
         const post = document.createElement("div")
-        post.setAttribute("id", postList[startingPosition + i])
+        post.setAttribute("id", postList[startingPosition + i][0])
         document.querySelector("#postBoard").appendChild(post)
-        ReactDOM.render(<Post postId={postList[startingPosition + i]} />, document.getElementById(postList[startingPosition + i]))
+        ReactDOM.render(<Post postId={postList[startingPosition + i][0]} />, document.getElementById(postList[startingPosition + i][0]))
     }
     currentPostListPosition += numberOfPosts
 }
@@ -311,6 +321,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
         XHR.addEventListener('load', function(e) {
             postList = JSON.parse(XHR.response).postList
+            sortPostListByDate()
             loadPost(0, 5)
         });
 

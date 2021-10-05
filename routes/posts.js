@@ -7,7 +7,6 @@ var cache = new Cache()
 cache.init()
 cache.updateCycle()
 
-
 router
     .route("/")
     .get((req, res) => {
