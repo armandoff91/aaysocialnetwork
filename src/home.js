@@ -1,4 +1,38 @@
 console.log("home.js loaded")
+
+class UserName extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            username : null
+        }
+        this.getUserName = this.getUserName.bind(this)
+    }
+
+    getUserName(event) {
+        const XHR = new XMLHttpRequest()
+
+        XHR.addEventListener('load', function(e) {
+            this.setState({
+                username: JSON.parse(XHR.response).firstName + " " + JSON.parse(XHR.response).lastName
+            })
+        });
+
+        XHR.open('GET', '/user?userId=' + this.props.userId);
+        XHR.send(null);
+    }
+
+    componentDidMount() {
+        if (this.props.isPostReceived) {
+            console.log(this.props.userId)
+        }
+    }
+
+    render() {
+        return <p class="strong">{this.state.username}</p>
+    }
+}
+
 class NewPostSection extends React.Component{
     constructor(props) {
         super(props)
@@ -114,7 +148,8 @@ class Post extends React.Component{
     loadToBlock() {
         this.getRequest((post) => {
             this.setState({
-                post: post
+                isPostReceived: true,
+                post: post,
             })
         })
     }
@@ -156,7 +191,7 @@ class Post extends React.Component{
             <div class="row">
                 <div class="col-3 col-sm-1 h-100"><img src="images/gump.jpg" class="img-thumbnail"></img></div>
                 <div class="col-11">
-                    <p class="strong">{this.state.post.authorId}</p>
+                    <UserName userId={this.state.post.authorId} isPostReceived={this.state.isPostReceived} />
                     <p class="small">{this.state.post.date}</p>
                 </div>
             </div>
@@ -232,7 +267,7 @@ class Comment extends React.Component {
         return <div class="container" commentid={this.props.comment._id}>
             <div class="row">
                 <div class="col">
-                    <h6>{this.props.comment.authorId}</h6>
+                    <UserName userId={this.props.comment.authorId}/>
                     <p class="small">{this.props.comment.body}</p>
                     <button type="button" class="btn">like</button>
                     <button type="button" class="btn" onClick={this.replyToggle}>reply</button>
@@ -290,6 +325,7 @@ class Reply extends React.Component {
 }
 var pinnedPostList = [];
 var postList = [];
+var userList = {};
 var currentPostListPosition = 0;
 
 function sortPostListByDate() {

@@ -12,9 +12,18 @@ router
         console.log(req.query)
         userCache.findOne(req.query.userId, (numberOfUsers, user) => {
             if (numberOfUsers === 1) {
-                res.json(user)
+                const result = {
+                    _id: user._id,
+                    username: user.username,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                }
+                res.json(result)
                 return
             } 
             res.json({msg: "no user found"})
         })
 })
+
+module.exports = router

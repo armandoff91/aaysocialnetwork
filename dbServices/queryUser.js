@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const schemas = require("./schemas/schemas")
 const userSchema = schemas.postSchema
 
-const User = mongoose.model("User", userSchema)
+const User = mongoose.model("User", schemas.userSchema)
 
 function queryUser(req, callback) {
     console.log("queryUser called")

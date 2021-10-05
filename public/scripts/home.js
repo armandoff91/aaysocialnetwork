@@ -8,16 +8,66 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 console.log("home.js loaded");
 
-var NewPostSection = function (_React$Component) {
-    _inherits(NewPostSection, _React$Component);
+var UserName = function (_React$Component) {
+    _inherits(UserName, _React$Component);
+
+    function UserName(props) {
+        _classCallCheck(this, UserName);
+
+        var _this = _possibleConstructorReturn(this, (UserName.__proto__ || Object.getPrototypeOf(UserName)).call(this, props));
+
+        _this.state = {
+            username: null
+        };
+        _this.getUserName = _this.getUserName.bind(_this);
+        return _this;
+    }
+
+    _createClass(UserName, [{
+        key: "getUserName",
+        value: function getUserName(event) {
+            var XHR = new XMLHttpRequest();
+
+            XHR.addEventListener('load', function (e) {
+                this.setState({
+                    username: JSON.parse(XHR.response).firstName + " " + JSON.parse(XHR.response).lastName
+                });
+            });
+
+            XHR.open('GET', '/user?userId=' + this.props.userId);
+            XHR.send(null);
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            if (this.props.isPostReceived) {
+                console.log(this.props.userId);
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "p",
+                { "class": "strong" },
+                this.state.username
+            );
+        }
+    }]);
+
+    return UserName;
+}(React.Component);
+
+var NewPostSection = function (_React$Component2) {
+    _inherits(NewPostSection, _React$Component2);
 
     function NewPostSection(props) {
         _classCallCheck(this, NewPostSection);
 
-        var _this = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
 
-        _this.submitNewPost = _this.submitNewPost.bind(_this);
-        return _this;
+        _this2.submitNewPost = _this2.submitNewPost.bind(_this2);
+        return _this2;
     }
 
     _createClass(NewPostSection, [{
@@ -85,31 +135,31 @@ var NewPostSection = function (_React$Component) {
     return NewPostSection;
 }(React.Component);
 
-var Post = function (_React$Component2) {
-    _inherits(Post, _React$Component2);
+var Post = function (_React$Component3) {
+    _inherits(Post, _React$Component3);
 
     function Post(props) {
         _classCallCheck(this, Post);
 
-        var _this2 = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
 
-        _this2.handleFormSubmit = {
+        _this3.handleFormSubmit = {
             newComment: function newComment(event) {
-                var _this3 = this;
+                var _this4 = this;
 
                 event.preventDefault();
                 this.postRequest("newComment", {
                     postId: this.props.postId,
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this3.setState({
+                    _this4.setState({
                         post: post
                     });
                 });
             },
 
             newReply: function newReply(event) {
-                var _this4 = this;
+                var _this5 = this;
 
                 event.preventDefault();
                 console.log("submit reply pressed");
@@ -118,18 +168,18 @@ var Post = function (_React$Component2) {
                     commentId: event.target.getAttribute("commentid"),
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this4.setState({
+                    _this5.setState({
                         post: post
                     });
                 });
             }
         };
 
-        _this2.commentToggle = _this2.commentToggle.bind(_this2);
-        for (key in _this2.handleFormSubmit) {
-            _this2.handleFormSubmit[key] = _this2.handleFormSubmit[key].bind(_this2);
+        _this3.commentToggle = _this3.commentToggle.bind(_this3);
+        for (key in _this3.handleFormSubmit) {
+            _this3.handleFormSubmit[key] = _this3.handleFormSubmit[key].bind(_this3);
         }
-        _this2.state = {
+        _this3.state = {
             isPostReceived: false,
             isCommentToggled: false,
             post: {
@@ -144,7 +194,7 @@ var Post = function (_React$Component2) {
                 "comments": ["blank"]
             }
         };
-        return _this2;
+        return _this3;
     }
 
     _createClass(Post, [{
@@ -194,10 +244,11 @@ var Post = function (_React$Component2) {
     }, {
         key: "loadToBlock",
         value: function loadToBlock() {
-            var _this5 = this;
+            var _this6 = this;
 
             this.getRequest(function (post) {
-                _this5.setState({
+                _this6.setState({
+                    isPostReceived: true,
                     post: post
                 });
             });
@@ -224,11 +275,7 @@ var Post = function (_React$Component2) {
                     React.createElement(
                         "div",
                         { "class": "col-11" },
-                        React.createElement(
-                            "p",
-                            { "class": "strong" },
-                            this.state.post.authorId
-                        ),
+                        React.createElement(UserName, { userId: this.state.post.authorId, isPostReceived: this.state.isPostReceived }),
                         React.createElement(
                             "p",
                             { "class": "small" },
@@ -285,25 +332,25 @@ var Post = function (_React$Component2) {
     return Post;
 }(React.Component);
 
-var CommentSection = function (_React$Component3) {
-    _inherits(CommentSection, _React$Component3);
+var CommentSection = function (_React$Component4) {
+    _inherits(CommentSection, _React$Component4);
 
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        var _this6 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this7 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
 
-        _this6.commentList = _this6.commentList.bind(_this6);
-        return _this6;
+        _this7.commentList = _this7.commentList.bind(_this7);
+        return _this7;
     }
 
     _createClass(CommentSection, [{
         key: "commentList",
         value: function commentList() {
-            var _this7 = this;
+            var _this8 = this;
 
             return this.props.commentList.map(function (comment) {
-                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this7.props.handleFormSubmit });
+                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this8.props.handleFormSubmit });
             });
         }
     }, {
@@ -353,19 +400,19 @@ var CommentSection = function (_React$Component3) {
     return CommentSection;
 }(React.Component);
 
-var Comment = function (_React$Component4) {
-    _inherits(Comment, _React$Component4);
+var Comment = function (_React$Component5) {
+    _inherits(Comment, _React$Component5);
 
     function Comment(props) {
         _classCallCheck(this, Comment);
 
-        var _this8 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
 
-        _this8.state = {
+        _this9.state = {
             isReplyToggled: false
         };
-        _this8.replyToggle = _this8.replyToggle.bind(_this8);
-        return _this8;
+        _this9.replyToggle = _this9.replyToggle.bind(_this9);
+        return _this9;
     }
 
     _createClass(Comment, [{
@@ -387,11 +434,7 @@ var Comment = function (_React$Component4) {
                     React.createElement(
                         "div",
                         { "class": "col" },
-                        React.createElement(
-                            "h6",
-                            null,
-                            this.props.comment.authorId
-                        ),
+                        React.createElement(UserName, { userId: this.props.comment.authorId }),
                         React.createElement(
                             "p",
                             { "class": "small" },
@@ -417,25 +460,25 @@ var Comment = function (_React$Component4) {
     return Comment;
 }(React.Component);
 
-var ReplySection = function (_React$Component5) {
-    _inherits(ReplySection, _React$Component5);
+var ReplySection = function (_React$Component6) {
+    _inherits(ReplySection, _React$Component6);
 
     function ReplySection(props) {
         _classCallCheck(this, ReplySection);
 
-        var _this9 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
 
-        _this9.replyList = _this9.replyList.bind(_this9);
-        return _this9;
+        _this10.replyList = _this10.replyList.bind(_this10);
+        return _this10;
     }
 
     _createClass(ReplySection, [{
         key: "replyList",
         value: function replyList() {
-            var _this10 = this;
+            var _this11 = this;
 
             return this.props.replyList.map(function (reply) {
-                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this10.props.commentid, replyid: reply._id });
+                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this11.props.commentid, replyid: reply._id });
             });
         }
     }, {
@@ -485,8 +528,8 @@ var ReplySection = function (_React$Component5) {
     return ReplySection;
 }(React.Component);
 
-var Reply = function (_React$Component6) {
-    _inherits(Reply, _React$Component6);
+var Reply = function (_React$Component7) {
+    _inherits(Reply, _React$Component7);
 
     function Reply(props) {
         _classCallCheck(this, Reply);
@@ -510,6 +553,7 @@ var Reply = function (_React$Component6) {
 
 var pinnedPostList = [];
 var postList = [];
+var userList = {};
 var currentPostListPosition = 0;
 
 function sortPostListByDate() {

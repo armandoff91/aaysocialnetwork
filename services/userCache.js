@@ -13,9 +13,9 @@ class UserCache {
 
     init(numberOfUsers = 100) {
         console.log("user Cache init")
-        queryPost({filter: {}, projection: null,
+        queryUser({filter: {}, projection: null,
         option: {
-            limit: numberOfposts, 
+            limit: numberOfUsers, 
         }}, 
         (numberOfUsers, users) => {
             for (var i=0; i<users.length; i++) {
