@@ -49,6 +49,12 @@ class UserName extends React.Component {
         }
     }
 
+    componentDidMount() {
+        if (this.props.userId !== null) {
+            this.mountUsername()
+        }
+    }
+
     render() {
         return <p class="strong">{this.state.username}</p>
     }
@@ -105,6 +111,7 @@ class Post extends React.Component{
     constructor(props) {
         super(props)
         this.commentToggle = this.commentToggle.bind(this)
+        this.displayTime = this.displayTime.bind(this)
         for (key in this.handleFormSubmit) {
             this.handleFormSubmit[key] = this.handleFormSubmit[key].bind(this)
         }
@@ -175,6 +182,10 @@ class Post extends React.Component{
         })
     }
 
+    displayTime(n) {
+        return moment(n).format("DD MMM YYYY hh:mm a")
+    }
+
     componentDidMount() {
         this.loadToBlock()
     }
@@ -210,10 +221,10 @@ class Post extends React.Component{
     render() {
         return <div class="container">
             <div class="row">
-                <div class="col-3 col-sm-1 h-100"><img src="images/gump.jpg" class="img-thumbnail"></img></div>
+                <div class="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" class="img-thumbnail"></img></div>
                 <div class="col-11">
-                    <UserName userId={this.state.post.authorId} isPostReceived={this.state.isPostReceived} />
-                    <p class="small">{this.state.post.date}</p>
+                    <UserName userId={this.state.post.authorId} />
+                    <p class="small">{this.displayTime(this.state.post.date)}</p>
                 </div>
             </div>
             <div class="row">
@@ -340,6 +351,7 @@ class Reply extends React.Component {
 
     render() {
         return <div commentid={this.props.commentid} replyid={this.props.reply._id}>
+            <UserName userId={this.props.reply.authorId}/>
             {this.props.reply.body}
         </div>
     }
@@ -393,9 +405,6 @@ window.addEventListener("scroll", (event) => {
     if ((window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight * 0.99)) {
         if (currentPostListPosition < postList.length) {
             loadPost(currentPostListPosition, 5)    
-        } else {
-            alert("Post limit exceeded, please refresh")
         }
     }
-     
 })

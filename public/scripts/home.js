@@ -67,6 +67,13 @@ var UserName = function (_React$Component) {
             }
         }
     }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            if (this.props.userId !== null) {
+                this.mountUsername();
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
@@ -198,6 +205,7 @@ var Post = function (_React$Component3) {
         };
 
         _this4.commentToggle = _this4.commentToggle.bind(_this4);
+        _this4.displayTime = _this4.displayTime.bind(_this4);
         for (key in _this4.handleFormSubmit) {
             _this4.handleFormSubmit[key] = _this4.handleFormSubmit[key].bind(_this4);
         }
@@ -276,6 +284,11 @@ var Post = function (_React$Component3) {
             });
         }
     }, {
+        key: 'displayTime',
+        value: function displayTime(n) {
+            return moment(n).format("DD MMM YYYY hh:mm a");
+        }
+    }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.loadToBlock();
@@ -292,16 +305,16 @@ var Post = function (_React$Component3) {
                     React.createElement(
                         'div',
                         { 'class': 'col-3 col-sm-1 h-100' },
-                        React.createElement('img', { src: 'images/gump.jpg', 'class': 'img-thumbnail' })
+                        React.createElement('img', { src: 'images/portrait_2.png', 'class': 'img-thumbnail' })
                     ),
                     React.createElement(
                         'div',
                         { 'class': 'col-11' },
-                        React.createElement(UserName, { userId: this.state.post.authorId, isPostReceived: this.state.isPostReceived }),
+                        React.createElement(UserName, { userId: this.state.post.authorId }),
                         React.createElement(
                             'p',
                             { 'class': 'small' },
-                            this.state.post.date
+                            this.displayTime(this.state.post.date)
                         )
                     )
                 ),
@@ -565,6 +578,7 @@ var Reply = function (_React$Component7) {
             return React.createElement(
                 'div',
                 { commentid: this.props.commentid, replyid: this.props.reply._id },
+                React.createElement(UserName, { userId: this.props.reply.authorId }),
                 this.props.reply.body
             );
         }
@@ -620,8 +634,6 @@ window.addEventListener("scroll", function (event) {
     if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight * 0.99) {
         if (currentPostListPosition < postList.length) {
             loadPost(currentPostListPosition, 5);
-        } else {
-            alert("Post limit exceeded, please refresh");
         }
     }
 });
