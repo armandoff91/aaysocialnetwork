@@ -1,5 +1,11 @@
 console.log("home.js loaded")
 
+var pinnedPostList = [];
+var postList = [];
+var userList = {};
+var currentPostListPosition = 0;
+
+
 class UserName extends React.Component {
     constructor(props) {
         super(props)
@@ -7,24 +13,39 @@ class UserName extends React.Component {
             username : null
         }
         this.getUserName = this.getUserName.bind(this)
+        this.mountUsername = this.mountUsername.bind(this)
     }
 
-    getUserName(event) {
+    getUserName(callback) {
         const XHR = new XMLHttpRequest()
 
         XHR.addEventListener('load', function(e) {
-            this.setState({
-                username: JSON.parse(XHR.response).firstName + " " + JSON.parse(XHR.response).lastName
-            })
+            callback(JSON.parse(XHR.response))
         });
 
         XHR.open('GET', '/user?userId=' + this.props.userId);
         XHR.send(null);
     }
 
-    componentDidMount() {
-        if (this.props.isPostReceived) {
-            console.log(this.props.userId)
+    mountUsername() {
+        if (userList[this.props.userId] !== undefined) {
+            this.setState({
+                username: userList[this.props.userId]
+            })
+        } else {
+            this.getUserName((response) => {
+                userList[this.props.userId] = (response.firstName + " " + response.lastName) != "undefined undefined" ? 
+                    response.firstName + " " + response.lastName : this.props.userId  
+                this.setState({
+                    username: userList[this.props.userId]
+                })
+            })
+        }
+    }
+    
+    componentDidUpdate(prevProps) {
+        if ((this.props.userId !== prevProps.userId) && (this.props.userId !== null)) {
+            this.mountUsername()
         }
     }
 
@@ -323,10 +344,6 @@ class Reply extends React.Component {
         </div>
     }
 }
-var pinnedPostList = [];
-var postList = [];
-var userList = {};
-var currentPostListPosition = 0;
 
 function sortPostListByDate() {
     postList.sort((a, b) => {
