@@ -78,7 +78,7 @@ var UserName = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 'p',
-                { 'class': 'strong' },
+                { className: 'strong' },
                 this.state.username
             );
         }
@@ -87,16 +87,92 @@ var UserName = function (_React$Component) {
     return UserName;
 }(React.Component);
 
-var NewPostSection = function (_React$Component2) {
-    _inherits(NewPostSection, _React$Component2);
+var Dropdown = function (_React$Component2) {
+    _inherits(Dropdown, _React$Component2);
+
+    function Dropdown(props) {
+        _classCallCheck(this, Dropdown);
+
+        var _this3 = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, props));
+
+        _this3.handleUpdateRequest = _this3.handleUpdateRequest.bind(_this3);
+        _this3.handleDeleteRequest = _this3.handleDeleteRequest.bind(_this3);
+        return _this3;
+    }
+
+    _createClass(Dropdown, [{
+        key: 'postRequest',
+        value: function postRequest(url, data, callback) {
+            var XHR = new XMLHttpRequest();
+            var formData = new FormData();
+
+            for (key in data) {
+                formData.append(key, data[key]);
+            }
+
+            XHR.addEventListener('load', function (e) {
+                callback(JSON.parse(XHR.response));
+            });
+
+            XHR.addEventListener('error', function (e) {
+                alert('Oops! Something went wrong.');
+            });
+
+            XHR.open('POST', '/posts/' + url);
+            XHR.send(formData);
+        }
+    }, {
+        key: 'handleUpdateRequest',
+        value: function handleUpdateRequest() {}
+    }, {
+        key: 'handleDeleteRequest',
+        value: function handleDeleteRequest() {}
+    }, {
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'div',
+                { className: 'dropdown' },
+                React.createElement('a', { className: 'btn btn-secondary dropdown-toggle', href: '#', role: 'button', id: 'dropdownMenuLink', 'data-bs-toggle': 'dropdown', 'aria-expanded': 'false' }),
+                React.createElement(
+                    'ul',
+                    { className: 'dropdown-menu', 'aria-labelledby': 'dropdownMenuLink' },
+                    React.createElement(
+                        'li',
+                        null,
+                        React.createElement(
+                            'a',
+                            { className: 'dropdown-item', href: '#' },
+                            'Edit'
+                        )
+                    ),
+                    React.createElement(
+                        'li',
+                        null,
+                        React.createElement(
+                            'a',
+                            { className: 'dropdown-item', href: '#' },
+                            'Delete'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Dropdown;
+}(React.Component);
+
+var NewPostSection = function (_React$Component3) {
+    _inherits(NewPostSection, _React$Component3);
 
     function NewPostSection(props) {
         _classCallCheck(this, NewPostSection);
 
-        var _this3 = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
 
-        _this3.submitNewPost = _this3.submitNewPost.bind(_this3);
-        return _this3;
+        _this4.submitNewPost = _this4.submitNewPost.bind(_this4);
+        return _this4;
     }
 
     _createClass(NewPostSection, [{
@@ -128,13 +204,13 @@ var NewPostSection = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 'div',
-                { 'class': 'container' },
+                { className: 'container' },
                 React.createElement(
                     'div',
-                    { 'class': 'row' },
+                    { className: 'row' },
                     React.createElement(
                         'div',
-                        { 'class': 'col' },
+                        { className: 'col' },
                         React.createElement(
                             'h6',
                             null,
@@ -142,16 +218,16 @@ var NewPostSection = function (_React$Component2) {
                         ),
                         React.createElement(
                             'form',
-                            { 'class': 'form-inline', onSubmit: this.submitNewPost },
+                            { className: 'form-inline', onSubmit: this.submitNewPost },
                             React.createElement(
                                 'div',
-                                { 'class': 'form-group' },
-                                React.createElement('input', { 'class': 'form-control', placeholder: 'Title', id: 'newPostTitle' }),
-                                React.createElement('input', { 'class': 'form-control', placeholder: 'What\'s on your mind?', id: 'newPostBody' })
+                                { className: 'form-group' },
+                                React.createElement('input', { className: 'form-control', placeholder: 'Title', id: 'newPostTitle' }),
+                                React.createElement('input', { className: 'form-control', placeholder: 'What\'s on your mind?', id: 'newPostBody' })
                             ),
                             React.createElement(
                                 'button',
-                                { type: 'submit', 'class': 'btn' },
+                                { type: 'submit', className: 'btn' },
                                 'submit'
                             )
                         )
@@ -164,31 +240,31 @@ var NewPostSection = function (_React$Component2) {
     return NewPostSection;
 }(React.Component);
 
-var Post = function (_React$Component3) {
-    _inherits(Post, _React$Component3);
+var Post = function (_React$Component4) {
+    _inherits(Post, _React$Component4);
 
     function Post(props) {
         _classCallCheck(this, Post);
 
-        var _this4 = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (Post.__proto__ || Object.getPrototypeOf(Post)).call(this, props));
 
-        _this4.handleFormSubmit = {
+        _this5.handleFormSubmit = {
             newComment: function newComment(event) {
-                var _this5 = this;
+                var _this6 = this;
 
                 event.preventDefault();
                 this.postRequest("newComment", {
                     postId: this.props.postId,
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this5.setState({
+                    _this6.setState({
                         post: post
                     });
                 });
             },
 
             newReply: function newReply(event) {
-                var _this6 = this;
+                var _this7 = this;
 
                 event.preventDefault();
                 console.log("submit reply pressed");
@@ -197,19 +273,19 @@ var Post = function (_React$Component3) {
                     commentId: event.target.getAttribute("commentid"),
                     body: event.target.querySelector("input").value
                 }, function (post) {
-                    _this6.setState({
+                    _this7.setState({
                         post: post
                     });
                 });
             }
         };
 
-        _this4.commentToggle = _this4.commentToggle.bind(_this4);
-        _this4.displayTime = _this4.displayTime.bind(_this4);
-        for (key in _this4.handleFormSubmit) {
-            _this4.handleFormSubmit[key] = _this4.handleFormSubmit[key].bind(_this4);
+        _this5.commentToggle = _this5.commentToggle.bind(_this5);
+        _this5.displayTime = _this5.displayTime.bind(_this5);
+        for (key in _this5.handleFormSubmit) {
+            _this5.handleFormSubmit[key] = _this5.handleFormSubmit[key].bind(_this5);
         }
-        _this4.state = {
+        _this5.state = {
             isPostReceived: false,
             isCommentToggled: false,
             post: {
@@ -224,7 +300,7 @@ var Post = function (_React$Component3) {
                 "comments": ["blank"]
             }
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(Post, [{
@@ -274,10 +350,10 @@ var Post = function (_React$Component3) {
     }, {
         key: 'loadToBlock',
         value: function loadToBlock() {
-            var _this7 = this;
+            var _this8 = this;
 
             this.getRequest(function (post) {
-                _this7.setState({
+                _this8.setState({
                     isPostReceived: true,
                     post: post
                 });
@@ -298,35 +374,35 @@ var Post = function (_React$Component3) {
         value: function render() {
             return React.createElement(
                 'div',
-                { 'class': 'container' },
+                { className: 'container' },
                 React.createElement(
                     'div',
-                    { 'class': 'row' },
+                    { className: 'row' },
                     React.createElement(
                         'div',
-                        { 'class': 'col-3 col-sm-1 h-100' },
-                        React.createElement('img', { src: 'images/portrait_2.png', 'class': 'img-thumbnail' })
+                        { className: 'col-3 col-sm-1 h-100' },
+                        React.createElement('img', { src: 'images/portrait_2.png', className: 'img-thumbnail' })
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'col-11' },
+                        { className: 'col-11' },
                         React.createElement(UserName, { userId: this.state.post.authorId }),
                         React.createElement(
                             'p',
-                            { 'class': 'small' },
+                            { className: 'small' },
                             this.displayTime(this.state.post.date)
                         )
                     )
                 ),
                 React.createElement(
                     'div',
-                    { 'class': 'row' },
+                    { className: 'row' },
                     React.createElement(
                         'div',
-                        { 'class': 'col' },
+                        { className: 'col-11' },
                         React.createElement(
                             'p',
-                            { 'class': 'strong' },
+                            { className: 'strong' },
                             this.state.post.title
                         ),
                         React.createElement(
@@ -334,22 +410,27 @@ var Post = function (_React$Component3) {
                             null,
                             this.state.post.body
                         )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-1' },
+                        React.createElement(Dropdown, null)
                     )
                 ),
                 React.createElement(
                     'div',
-                    { 'class': 'row justify-content-between' },
+                    { className: 'row justify-content-between' },
                     React.createElement(
                         'div',
-                        { 'class': 'col' },
+                        { className: 'col' },
                         React.createElement(
                             'button',
-                            { type: 'button', 'class': 'btn' },
+                            { type: 'button', className: 'btn' },
                             'likes'
                         ),
                         React.createElement(
                             'button',
-                            { type: 'button', 'class': 'btn', onClick: this.commentToggle },
+                            { type: 'button', className: 'btn', onClick: this.commentToggle },
                             'Comment'
                         ),
                         React.createElement(
@@ -367,25 +448,25 @@ var Post = function (_React$Component3) {
     return Post;
 }(React.Component);
 
-var CommentSection = function (_React$Component4) {
-    _inherits(CommentSection, _React$Component4);
+var CommentSection = function (_React$Component5) {
+    _inherits(CommentSection, _React$Component5);
 
     function CommentSection(props) {
         _classCallCheck(this, CommentSection);
 
-        var _this8 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, (CommentSection.__proto__ || Object.getPrototypeOf(CommentSection)).call(this, props));
 
-        _this8.commentList = _this8.commentList.bind(_this8);
-        return _this8;
+        _this9.commentList = _this9.commentList.bind(_this9);
+        return _this9;
     }
 
     _createClass(CommentSection, [{
         key: 'commentList',
         value: function commentList() {
-            var _this9 = this;
+            var _this10 = this;
 
             return this.props.commentList.map(function (comment) {
-                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this9.props.handleFormSubmit });
+                return React.createElement(Comment, { key: comment._id, comment: comment, handleFormSubmit: _this10.props.handleFormSubmit });
             });
         }
     }, {
@@ -397,24 +478,24 @@ var CommentSection = function (_React$Component4) {
                     null,
                     React.createElement(
                         'div',
-                        { 'class': 'container' },
+                        { className: 'container' },
                         React.createElement(
                             'div',
-                            { 'class': 'row' },
+                            { className: 'row' },
                             React.createElement(
                                 'div',
-                                { 'class': 'col' },
+                                { className: 'col' },
                                 React.createElement(
                                     'form',
-                                    { 'class': 'form-inline', onSubmit: this.props.handleFormSubmit.newComment },
+                                    { className: 'form-inline', onSubmit: this.props.handleFormSubmit.newComment },
                                     React.createElement(
                                         'div',
-                                        { 'class': 'form-group' },
-                                        React.createElement('input', { 'class': 'form-control', placeholder: 'Your Comment here...' })
+                                        { className: 'form-group' },
+                                        React.createElement('input', { className: 'form-control', placeholder: 'Your Comment here...' })
                                     ),
                                     React.createElement(
                                         'button',
-                                        { type: 'submit', 'class': 'btn' },
+                                        { type: 'submit', className: 'btn' },
                                         'submit'
                                     )
                                 )
@@ -435,19 +516,19 @@ var CommentSection = function (_React$Component4) {
     return CommentSection;
 }(React.Component);
 
-var Comment = function (_React$Component5) {
-    _inherits(Comment, _React$Component5);
+var Comment = function (_React$Component6) {
+    _inherits(Comment, _React$Component6);
 
     function Comment(props) {
         _classCallCheck(this, Comment);
 
-        var _this10 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
+        var _this11 = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
 
-        _this10.state = {
+        _this11.state = {
             isReplyToggled: false
         };
-        _this10.replyToggle = _this10.replyToggle.bind(_this10);
-        return _this10;
+        _this11.replyToggle = _this11.replyToggle.bind(_this11);
+        return _this11;
     }
 
     _createClass(Comment, [{
@@ -462,29 +543,34 @@ var Comment = function (_React$Component5) {
         value: function render() {
             return React.createElement(
                 'div',
-                { 'class': 'container', commentid: this.props.comment._id },
+                { className: 'container', commentid: this.props.comment._id },
                 React.createElement(
                     'div',
-                    { 'class': 'row' },
+                    { className: 'row' },
                     React.createElement(
                         'div',
-                        { 'class': 'col' },
+                        { className: 'col-11' },
                         React.createElement(UserName, { userId: this.props.comment.authorId }),
                         React.createElement(
                             'p',
-                            { 'class': 'small' },
+                            { className: 'small' },
                             this.props.comment.body
                         ),
                         React.createElement(
                             'button',
-                            { type: 'button', 'class': 'btn' },
+                            { type: 'button', className: 'btn' },
                             'like'
                         ),
                         React.createElement(
                             'button',
-                            { type: 'button', 'class': 'btn', onClick: this.replyToggle },
+                            { type: 'button', className: 'btn', onClick: this.replyToggle },
                             'reply'
                         )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-1' },
+                        React.createElement(Dropdown, null)
                     )
                 ),
                 React.createElement(ReplySection, { commentid: this.props.comment._id, isReplyToggled: this.state.isReplyToggled, replyList: this.props.comment.replies, handleFormSubmit: this.props.handleFormSubmit })
@@ -495,25 +581,25 @@ var Comment = function (_React$Component5) {
     return Comment;
 }(React.Component);
 
-var ReplySection = function (_React$Component6) {
-    _inherits(ReplySection, _React$Component6);
+var ReplySection = function (_React$Component7) {
+    _inherits(ReplySection, _React$Component7);
 
     function ReplySection(props) {
         _classCallCheck(this, ReplySection);
 
-        var _this11 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
+        var _this12 = _possibleConstructorReturn(this, (ReplySection.__proto__ || Object.getPrototypeOf(ReplySection)).call(this, props));
 
-        _this11.replyList = _this11.replyList.bind(_this11);
-        return _this11;
+        _this12.replyList = _this12.replyList.bind(_this12);
+        return _this12;
     }
 
     _createClass(ReplySection, [{
         key: 'replyList',
         value: function replyList() {
-            var _this12 = this;
+            var _this13 = this;
 
             return this.props.replyList.map(function (reply) {
-                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this12.props.commentid, replyid: reply._id });
+                return React.createElement(Reply, { key: reply._id, reply: reply, commentid: _this13.props.commentid, replyid: reply._id });
             });
         }
     }, {
@@ -525,24 +611,24 @@ var ReplySection = function (_React$Component6) {
                     null,
                     React.createElement(
                         'div',
-                        { 'class': 'container' },
+                        { className: 'container' },
                         React.createElement(
                             'div',
-                            { 'class': 'row' },
+                            { className: 'row' },
                             React.createElement(
                                 'div',
-                                { 'class': 'col' },
+                                { className: 'col' },
                                 React.createElement(
                                     'form',
-                                    { 'class': 'form-inline', onSubmit: this.props.handleFormSubmit.newReply, commentid: this.props.commentid },
+                                    { className: 'form-inline', onSubmit: this.props.handleFormSubmit.newReply, commentid: this.props.commentid },
                                     React.createElement(
                                         'div',
-                                        { 'class': 'form-group' },
-                                        React.createElement('input', { 'class': 'form-control', placeholder: 'Your Reply here...' })
+                                        { className: 'form-group' },
+                                        React.createElement('input', { className: 'form-control', placeholder: 'Your Reply here...' })
                                     ),
                                     React.createElement(
                                         'button',
-                                        { type: 'submit', 'class': 'btn' },
+                                        { type: 'submit', className: 'btn' },
                                         'submit'
                                     )
                                 )
@@ -563,8 +649,8 @@ var ReplySection = function (_React$Component6) {
     return ReplySection;
 }(React.Component);
 
-var Reply = function (_React$Component7) {
-    _inherits(Reply, _React$Component7);
+var Reply = function (_React$Component8) {
+    _inherits(Reply, _React$Component8);
 
     function Reply(props) {
         _classCallCheck(this, Reply);
@@ -577,9 +663,22 @@ var Reply = function (_React$Component7) {
         value: function render() {
             return React.createElement(
                 'div',
-                { commentid: this.props.commentid, replyid: this.props.reply._id },
-                React.createElement(UserName, { userId: this.props.reply.authorId }),
-                this.props.reply.body
+                { className: 'row', commentid: this.props.commentid, replyid: this.props.reply._id },
+                React.createElement(
+                    'div',
+                    { className: 'col-11' },
+                    React.createElement(UserName, { userId: this.props.reply.authorId }),
+                    React.createElement(
+                        'p',
+                        null,
+                        this.props.reply.body
+                    )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'col-1' },
+                    React.createElement(Dropdown, null)
+                )
             );
         }
     }]);

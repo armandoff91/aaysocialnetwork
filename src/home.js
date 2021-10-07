@@ -5,7 +5,6 @@ var postList = [];
 var userList = {};
 var currentPostListPosition = 0;
 
-
 class UserName extends React.Component {
     constructor(props) {
         super(props)
@@ -56,7 +55,57 @@ class UserName extends React.Component {
     }
 
     render() {
-        return <p class="strong">{this.state.username}</p>
+        return <p className="strong">{this.state.username}</p>
+    }
+}
+
+
+class Dropdown extends React.Component {
+    constructor(props) {
+        super(props)
+        this.handleUpdateRequest = this.handleUpdateRequest.bind(this)
+        this.handleDeleteRequest = this.handleDeleteRequest.bind(this)
+    }
+
+    postRequest(url, data, callback) {
+        const XHR = new XMLHttpRequest()
+        var formData = new FormData()
+
+        for (key in data) {
+            formData.append(key, data[key])
+        }
+
+        XHR.addEventListener('load', function(e) {
+            callback(JSON.parse(XHR.response))
+        });
+
+        XHR.addEventListener('error', function(e) {
+            alert( 'Oops! Something went wrong.' );
+        } );
+
+        XHR.open('POST', '/posts/' + url);
+        XHR.send(formData);
+    }
+
+    handleUpdateRequest() {
+
+    }
+
+    handleDeleteRequest() {
+
+    }
+
+    render() {
+        return <div className="dropdown">
+            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                
+            </a>
+
+            <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li><a className="dropdown-item" href="#">Edit</a></li>
+                <li><a className="dropdown-item" href="#">Delete</a></li>
+            </ul>
+        </div>
     }
 }
 
@@ -90,16 +139,16 @@ class NewPostSection extends React.Component{
     }
 
     render() {
-        return <div class="container">
-            <div class="row">
-                <div class="col">
+        return <div className="container">
+            <div className="row">
+                <div className="col">
                     <h6>New Post</h6>
-                    <form class="form-inline" onSubmit={this.submitNewPost}>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Title" id="newPostTitle"></input>
-                            <input class="form-control" placeholder="What's on your mind?" id="newPostBody"></input>
+                    <form className="form-inline" onSubmit={this.submitNewPost}>
+                        <div className="form-group">
+                            <input className="form-control" placeholder="Title" id="newPostTitle"></input>
+                            <input className="form-control" placeholder="What's on your mind?" id="newPostBody"></input>
                         </div>
-                        <button type="submit" class="btn">submit</button>
+                        <button type="submit" className="btn">submit</button>
                     </form>
                 </div>
             </div>
@@ -219,24 +268,27 @@ class Post extends React.Component{
     }
 
     render() {
-        return <div class="container">
-            <div class="row">
-                <div class="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" class="img-thumbnail"></img></div>
-                <div class="col-11">
+        return <div className="container">
+            <div className="row">
+                <div className="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" className="img-thumbnail"></img></div>
+                <div className="col-11">
                     <UserName userId={this.state.post.authorId} />
-                    <p class="small">{this.displayTime(this.state.post.date)}</p>
+                    <p className="small">{this.displayTime(this.state.post.date)}</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <p class="strong">{this.state.post.title}</p>
+            <div className="row">
+                <div className="col-11">
+                    <p className="strong">{this.state.post.title}</p>
                     <p>{this.state.post.body}</p>
                 </div>
+                <div className="col-1">
+                    <Dropdown />
+                </div>
             </div>
-            <div class="row justify-content-between">
-                <div class="col">
-                    <button type="button" class="btn">likes</button>
-                    <button type="button" class="btn" onClick={this.commentToggle}>Comment</button>
+            <div className="row justify-content-between">
+                <div className="col">
+                    <button type="button" className="btn">likes</button>
+                    <button type="button" className="btn" onClick={this.commentToggle}>Comment</button>
                     <a>{this.state.post.comments.length}</a>
                 </div>
             </div>
@@ -258,14 +310,14 @@ class CommentSection extends React.Component {
     render() {
         if (this.props.isCommentToggled) {
             return <div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <form class="form-inline" onSubmit={this.props.handleFormSubmit.newComment}>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Your Comment here..."></input>
+                <div className="container">
+                    <div className="row">
+                        <div className="col">
+                            <form className="form-inline" onSubmit={this.props.handleFormSubmit.newComment}>
+                                <div className="form-group">
+                                    <input className="form-control" placeholder="Your Comment here..."></input>
                                 </div>
-                                <button type="submit" class="btn">submit</button>
+                                <button type="submit" className="btn">submit</button>
                             </form>
                         </div>
                     </div>
@@ -296,13 +348,16 @@ class Comment extends React.Component {
     }
 
     render() {
-        return <div class="container" commentid={this.props.comment._id}>
-            <div class="row">
-                <div class="col">
+        return <div className="container" commentid={this.props.comment._id}>
+            <div className="row">
+                <div className="col-11">
                     <UserName userId={this.props.comment.authorId}/>
-                    <p class="small">{this.props.comment.body}</p>
-                    <button type="button" class="btn">like</button>
-                    <button type="button" class="btn" onClick={this.replyToggle}>reply</button>
+                    <p className="small">{this.props.comment.body}</p>
+                    <button type="button" className="btn">like</button>
+                    <button type="button" className="btn" onClick={this.replyToggle}>reply</button>
+                </div>
+                <div className="col-1">
+                    <Dropdown />
                 </div>
             </div>
             <ReplySection commentid={this.props.comment._id} isReplyToggled={this.state.isReplyToggled} replyList={this.props.comment.replies} handleFormSubmit={this.props.handleFormSubmit}/>
@@ -323,14 +378,14 @@ class ReplySection extends React.Component {
     render() {
         if (this.props.isReplyToggled) {
             return <div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <form class="form-inline" onSubmit={this.props.handleFormSubmit.newReply} commentid={this.props.commentid}>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Your Reply here..."></input>
+                <div className="container">
+                    <div className="row">
+                        <div className="col">
+                            <form className="form-inline" onSubmit={this.props.handleFormSubmit.newReply} commentid={this.props.commentid}>
+                                <div className="form-group">
+                                    <input className="form-control" placeholder="Your Reply here..."></input>
                                 </div>
-                                <button type="submit" class="btn">submit</button>
+                                <button type="submit" className="btn">submit</button>
                             </form>
                         </div>
                     </div>
@@ -350,9 +405,14 @@ class Reply extends React.Component {
     }
 
     render() {
-        return <div commentid={this.props.commentid} replyid={this.props.reply._id}>
-            <UserName userId={this.props.reply.authorId}/>
-            {this.props.reply.body}
+        return <div className="row" commentid={this.props.commentid} replyid={this.props.reply._id}>
+            <div className="col-11">
+                <UserName userId={this.props.reply.authorId}/>
+                <p>{this.props.reply.body}</p>
+            </div>
+            <div className="col-1">
+                <Dropdown />
+            </div>
         </div>
     }
 }
