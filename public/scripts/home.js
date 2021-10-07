@@ -374,7 +374,7 @@ var Post = function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 'div',
-                { className: 'container' },
+                { className: 'container my-5' },
                 React.createElement(
                     'div',
                     { className: 'row' },
