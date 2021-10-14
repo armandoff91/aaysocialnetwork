@@ -282,7 +282,7 @@ class Cache {
             if (this.isAuthorized(request.userId, targetPost.authorId)) {
                 delete this.body[request.postId]
                 this.addToDeleteQueue(request.postId)
-                callback({msg: request.postId + " deleted."})
+                callback({msg: "Post deleted."})
                 return
             }
             callback({msg: "unauthorized to delete post"})
@@ -322,10 +322,14 @@ class Cache {
                     var targetComment = this.body[request.postId].comments[i]
                     for (var j in targetComment.replies) {
                         if (targetComment.replies[j].id === request.replyId) {
-                            console.log("reply found")
-                            targetComment.replies.splice(j, 1)
-                            deleted = true
-                            break
+                            if (this.isAuthorized(request.userId, this.body[request.postId].comments[i].replies[j].authorId)) {
+                                console.log("reply found")
+                                targetComment.replies.splice(j, 1)
+                                deleted = true
+                                break
+                            }
+                            callback({msg: "unauthorized to delete reply."})
+                            return
                         }
                     }
                     break

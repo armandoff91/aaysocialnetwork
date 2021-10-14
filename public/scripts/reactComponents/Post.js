@@ -33,7 +33,6 @@ var Post = function (_React$Component) {
                 var _this3 = this;
 
                 event.preventDefault();
-                console.log("submit reply pressed");
                 this.postRequest("newReply", {
                     postId: this.props.postId,
                     commentId: event.target.getAttribute("commentid"),
@@ -49,7 +48,6 @@ var Post = function (_React$Component) {
                 var _this4 = this;
 
                 event.preventDefault();
-                console.log("submit edit");
                 this.postRequest("edit" + event.target.getAttribute("context"), {
                     postId: event.target.getAttribute("postid"),
                     commentId: event.target.getAttribute("commentid"),
@@ -61,6 +59,33 @@ var Post = function (_React$Component) {
                         isEditToggled: false
                     });
                 });
+            },
+
+            delete: function _delete(event) {
+                var _this5 = this;
+
+                event.preventDefault();
+                if (confirm("Are you sure you want to delete the content?")) {
+                    this.postRequest("delete" + event.target.getAttribute("context"), {
+                        postId: event.target.getAttribute("postid"),
+                        commentId: event.target.getAttribute("commentid"),
+                        replyId: event.target.getAttribute("replyid")
+                    }, function (response) {
+                        if (response.hasOwnProperty("msg")) {
+                            alert(response.msg);
+                            if (response.msg === "Post deleted.") {
+                                location.reload();
+                                return false;
+                            }
+                        } else {
+                            _this5.setState({
+                                post: response
+                            });
+                        }
+                    });
+                } else {
+                    alert("delete request cancelled.");
+                }
             }
         };
 
@@ -136,10 +161,10 @@ var Post = function (_React$Component) {
     }, {
         key: "loadToBlock",
         value: function loadToBlock() {
-            var _this5 = this;
+            var _this6 = this;
 
             this.getRequest(function (post) {
-                _this5.setState({
+                _this6.setState({
                     isPostReceived: true,
                     post: post
                 });
@@ -204,7 +229,7 @@ var Post = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "col-1" },
-                        React.createElement(Dropdown, { postId: this.state.post._id, editToggle: this.editToggle })
+                        React.createElement(Dropdown, { context: "post", postId: this.state.post._id, editToggle: this.editToggle, handleDeleteSubmit: this.handleFormSubmit.delete })
                     )
                 ),
                 React.createElement(

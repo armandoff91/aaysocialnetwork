@@ -106,6 +106,7 @@ router
     .post((req, res) => {
         console.log("delete reply request received")
         const deletion = {
+            userId: req.user,
             postId : req.body.postId,
             commentId : req.body.commentId,
             replyId : req.body.replyId

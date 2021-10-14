@@ -73,7 +73,7 @@ class Comment extends React.Component {
                     <a>{this.props.comment.replies.length}</a>
                 </div>
                 <div className="col-1">
-                    <Dropdown context="comment" postId={this.props.postId} commentId={this.props.comment._id} editToggle={this.editToggle}/>
+                    <Dropdown context="comment" postId={this.props.postId} commentId={this.props.comment._id} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>
                 </div>
             </div>
             <ReplySection postId={this.props.postId} commentId={this.props.comment._id} isReplyToggled={this.state.isReplyToggled} replyList={this.props.comment.replies} handleFormSubmit={this.props.handleFormSubmit}/>

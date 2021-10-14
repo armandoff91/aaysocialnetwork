@@ -12,83 +12,49 @@ var Dropdown = function (_React$Component) {
     function Dropdown(props) {
         _classCallCheck(this, Dropdown);
 
-        var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, props));
-
-        _this.handleUpdateOnClick = _this.handleUpdateOnClick.bind(_this);
-        _this.handleDeleteOnClick = _this.handleDeleteOnClick.bind(_this);
-        return _this;
+        return _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, props));
     }
 
     _createClass(Dropdown, [{
-        key: 'postRequest',
-        value: function postRequest(url, data, callback) {
-            var XHR = new XMLHttpRequest();
-            var formData = new FormData();
-
-            for (key in data) {
-                formData.append(key, data[key]);
-            }
-
-            XHR.addEventListener('load', function (e) {
-                callback(JSON.parse(XHR.response));
-            });
-
-            XHR.addEventListener('error', function (e) {
-                alert('Oops! Something went wrong.');
-            });
-
-            XHR.open('POST', '/posts/' + url);
-            XHR.send(formData);
-        }
-    }, {
-        key: 'handleUpdateOnClick',
-        value: function handleUpdateOnClick() {
-            console.log("handleUpdate");
-            ReactDOM.render(React.createElement(EditSection, { postRequest: this.postRequest }), document.querySelector("#editSection"));
-        }
-    }, {
-        key: 'handleDeleteOnClick',
-        value: function handleDeleteOnClick() {}
-    }, {
-        key: 'render',
+        key: "render",
         value: function render() {
             return React.createElement(
-                'div',
-                { className: 'dropdown' },
-                React.createElement('a', { className: 'btn btn-secondary dropdown-toggle', href: '#', role: 'button', id: 'dropdownMenuLink', 'data-bs-toggle': 'dropdown', 'aria-expanded': 'false' }),
+                "div",
+                { className: "dropdown" },
+                React.createElement("a", { className: "btn btn-secondary dropdown-toggle", href: "#", role: "button", id: "dropdownMenuLink", "data-bs-toggle": "dropdown", "aria-expanded": "false" }),
                 React.createElement(
-                    'ul',
-                    { className: 'dropdown-menu', 'aria-labelledby': 'dropdownMenuLink' },
+                    "ul",
+                    { className: "dropdown-menu", "aria-labelledby": "dropdownMenuLink" },
                     React.createElement(
-                        'li',
+                        "li",
                         null,
                         React.createElement(
-                            'p',
+                            "p",
                             null,
-                            'postId:',
+                            "postId:",
                             this.props.postId,
-                            ', commentId:',
+                            ", commentId:",
                             this.props.commentId,
-                            ', replyId:',
+                            ", replyId:",
                             this.props.replyId
                         )
                     ),
                     React.createElement(
-                        'li',
+                        "li",
                         null,
                         React.createElement(
-                            'a',
-                            { className: 'dropdown-item', onClick: this.props.editToggle },
-                            'Edit'
+                            "a",
+                            { className: "dropdown-item", onClick: this.props.editToggle },
+                            "Edit"
                         )
                     ),
                     React.createElement(
-                        'li',
+                        "li",
                         null,
                         React.createElement(
-                            'a',
-                            { className: 'dropdown-item' },
-                            'Delete'
+                            "a",
+                            { className: "dropdown-item", onClick: this.props.handleDeleteSubmit, context: this.props.context, postid: this.props.postId, commentid: this.props.commentId, replyid: this.props.replyId },
+                            "Delete"
                         )
                     )
                 )

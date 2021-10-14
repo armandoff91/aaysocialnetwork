@@ -115,7 +115,7 @@ var Reply = function (_React$Component2) {
                 React.createElement(
                     "div",
                     { className: "col-1" },
-                    React.createElement(Dropdown, { context: "reply", postId: this.props.postId, commentId: this.props.commentId, replyId: this.props.replyId, editToggle: this.editToggle })
+                    React.createElement(Dropdown, { context: "reply", postId: this.props.postId, commentId: this.props.commentId, replyId: this.props.replyId, editToggle: this.editToggle, handleDeleteSubmit: this.props.handleFormSubmit.delete })
                 )
             );
         }

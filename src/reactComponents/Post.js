@@ -105,7 +105,6 @@ class Post extends React.Component{
 
         newReply: function (event)  {
             event.preventDefault()
-            console.log("submit reply pressed")
             this.postRequest("newReply", {
                 postId: this.props.postId,
                 commentId: event.target.getAttribute("commentid"),
@@ -119,7 +118,6 @@ class Post extends React.Component{
 
         edit: function (event) {
             event.preventDefault()
-            console.log("submit edit")
             this.postRequest("edit" + event.target.getAttribute("context"), {
                 postId: event.target.getAttribute("postid"),
                 commentId: event.target.getAttribute("commentid"),
@@ -131,6 +129,31 @@ class Post extends React.Component{
                     isEditToggled: false
                 })
             })
+        },
+
+        delete: function (event) {
+            event.preventDefault()
+            if(confirm("Are you sure you want to delete the content?")) {
+                this.postRequest("delete" + event.target.getAttribute("context"), {
+                    postId: event.target.getAttribute("postid"),
+                    commentId: event.target.getAttribute("commentid"),
+                    replyId: event.target.getAttribute("replyid"),
+                }, (response) => {
+                    if (response.hasOwnProperty("msg")) {
+                        alert(response.msg)
+                        if (response.msg === "Post deleted.") {
+                            location.reload();
+                            return false;
+                        }
+                    } else {
+                        this.setState({
+                            post: response
+                        })
+                    }
+                })
+            } else {
+                alert("delete request cancelled.")
+            }
         }
     }
 
@@ -149,7 +172,7 @@ class Post extends React.Component{
                     <ContentBody context="post" postId={this.state.post._id} body={this.state.post.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.handleFormSubmit.edit}/>
                 </div>
                 <div className="col-1">
-                    <Dropdown postId={this.state.post._id} editToggle={this.editToggle}/>
+                    <Dropdown context="post" postId={this.state.post._id} editToggle={this.editToggle} handleDeleteSubmit={this.handleFormSubmit.delete}/>
                 </div>
             </div>
             <div className="row justify-content-between">

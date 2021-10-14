@@ -61,7 +61,7 @@ class Reply extends React.Component {
                 <ContentBody context="reply" postId={this.props.postId} commentId={this.props.commentId} replyId={this.props.replyId} body={this.props.reply.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.props.handleFormSubmit.edit}/>
             </div>
             <div className="col-1">
-                <Dropdown context="reply" postId={this.props.postId} commentId={this.props.commentId} replyId={this.props.replyId} editToggle={this.editToggle}/>
+                <Dropdown context="reply" postId={this.props.postId} commentId={this.props.commentId} replyId={this.props.replyId} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>
             </div>
         </div>
     }

@@ -142,7 +142,7 @@ var Comment = function (_React$Component2) {
                     React.createElement(
                         "div",
                         { className: "col-1" },
-                        React.createElement(Dropdown, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, editToggle: this.editToggle })
+                        React.createElement(Dropdown, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, editToggle: this.editToggle, handleDeleteSubmit: this.props.handleFormSubmit.delete })
                     )
                 ),
                 React.createElement(ReplySection, { postId: this.props.postId, commentId: this.props.comment._id, isReplyToggled: this.state.isReplyToggled, replyList: this.props.comment.replies, handleFormSubmit: this.props.handleFormSubmit })
