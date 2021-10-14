@@ -27,4 +27,3 @@ async function deletePost(postId, callback) {
 
 
 module.exports = deletePost;
-// find out how to query comments

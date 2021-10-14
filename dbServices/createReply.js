@@ -6,7 +6,6 @@ const commentSchema = schemas.commentSchema
 const replySchema = schemas.replySchema
 
 const Post = mongoose.model("Post", postSchema)
-const Comment = mongoose.model("Comment", commentSchema)
 const Reply = mongoose.model("Reply", replySchema)
 
 function createReply(reply, callback) {
@@ -27,7 +26,6 @@ function createReply(reply, callback) {
                 break
             }
         }
-        // posts[0].comments[reply.commentId].replies.push(newReply)
         post.save().then((updatedPost) => {
             callback(updatedPost)
         }).catch((err) => {

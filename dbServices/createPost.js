@@ -17,7 +17,6 @@ function createPost(postObject, callback) {
     
     newPost.save()
         .then((savedDoc) => {
-            // further action: check if post is created.
             callback(savedDoc)
         })
         .catch((err) => {
@@ -26,8 +25,3 @@ function createPost(postObject, callback) {
 }
 
 module.exports = createPost;
-
-// further action:
-// export a function that accept a post(a js object) then create post in mongodb and return a success or fail message
-// solve the date problem
-
