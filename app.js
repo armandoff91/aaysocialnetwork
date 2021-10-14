@@ -47,6 +47,10 @@ app.get("/", (req, res) => {
     res.render('landing')
 })
 
+app.get("/dev", (req, res) => {
+    res.render("dev")
+})
+
 app.use("/auth", auth);
 
 app.use("/", (req, res, next) => {
