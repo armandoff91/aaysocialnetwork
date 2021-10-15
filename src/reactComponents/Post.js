@@ -160,7 +160,7 @@ class Post extends React.Component{
     render() {
         return <div className="container my-5">
             <div className="row">
-                <div className="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" className="img-thumbnail"></img></div>
+                <div className="col-1 h-100"><img src="images/portrait_2.png" className="img-thumbnail"></img></div>
                 <div className="col-11">
                     <UserName userId={this.state.post.authorId} />
                     <p className="small">{this.displayTime(this.state.post.date)}</p>

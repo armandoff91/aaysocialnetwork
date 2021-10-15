@@ -199,7 +199,7 @@ var Post = function (_React$Component) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-3 col-sm-1 h-100" },
+                        { className: "col-1 h-100" },
                         React.createElement("img", { src: "images/portrait_2.png", className: "img-thumbnail" })
                     ),
                     React.createElement(
