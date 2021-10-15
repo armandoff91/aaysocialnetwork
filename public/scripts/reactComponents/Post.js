@@ -199,12 +199,12 @@ var Post = function (_React$Component) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-1 h-100" },
+                        { className: "col-3 col-sm-1 h-100" },
                         React.createElement("img", { src: "images/portrait_2.png", className: "img-thumbnail" })
                     ),
                     React.createElement(
                         "div",
-                        { className: "col-11" },
+                        { className: "col-9 col-sm-11" },
                         React.createElement(UserName, { userId: this.state.post.authorId }),
                         React.createElement(
                             "p",
@@ -218,7 +218,7 @@ var Post = function (_React$Component) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-11" },
+                        { className: "col-10 col-sm-1" },
                         React.createElement(
                             "p",
                             { className: "strong" },
@@ -228,7 +228,7 @@ var Post = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "col-1" },
+                        { className: "col-2 col-sm-11" },
                         React.createElement(Dropdown, { context: "post", postId: this.state.post._id, editToggle: this.editToggle, handleDeleteSubmit: this.handleFormSubmit.delete })
                     )
                 ),

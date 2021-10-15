@@ -120,7 +120,7 @@ var Comment = function (_React$Component2) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-11" },
+                        { className: "col-10 col-sm-11" },
                         React.createElement(UserName, { userId: this.props.comment.authorId }),
                         React.createElement(ContentBody, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, body: this.props.comment.body, isEditToggled: this.state.isEditToggled, editToggle: this.editToggle, handleEditSubmit: this.props.handleFormSubmit.edit }),
                         React.createElement(
@@ -141,7 +141,7 @@ var Comment = function (_React$Component2) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "col-1" },
+                        { className: "col-2 col-sm-1" },
                         React.createElement(Dropdown, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, editToggle: this.editToggle, handleDeleteSubmit: this.props.handleFormSubmit.delete })
                     )
                 ),

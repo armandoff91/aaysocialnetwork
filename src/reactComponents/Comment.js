@@ -65,14 +65,14 @@ class Comment extends React.Component {
     render() {
         return <div className="container" commentid={this.props.comment._id}>
             <div className="row">
-                <div className="col-11">
+                <div className="col-10 col-sm-11">
                     <UserName userId={this.props.comment.authorId}/>
                     <ContentBody context="comment" postId={this.props.postId} commentId={this.props.comment._id} body={this.props.comment.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.props.handleFormSubmit.edit}/>
                     <button type="button" className="btn">like</button>
                     <button type="button" className="btn" onClick={this.replyToggle}>reply</button>
                     <a>{this.props.comment.replies.length}</a>
                 </div>
-                <div className="col-1">
+                <div className="col-2 col-sm-1">
                     <Dropdown context="comment" postId={this.props.postId} commentId={this.props.comment._id} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>
                 </div>
             </div>

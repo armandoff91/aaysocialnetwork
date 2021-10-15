@@ -108,13 +108,13 @@ var Reply = function (_React$Component2) {
                 { className: "row", commentId: this.props.commentId, replyId: this.props.replyId },
                 React.createElement(
                     "div",
-                    { className: "col-11" },
+                    { className: "col-10 col-sm-11" },
                     React.createElement(UserName, { userId: this.props.reply.authorId }),
                     React.createElement(ContentBody, { context: "reply", postId: this.props.postId, commentId: this.props.commentId, replyId: this.props.replyId, body: this.props.reply.body, isEditToggled: this.state.isEditToggled, editToggle: this.editToggle, handleEditSubmit: this.props.handleFormSubmit.edit })
                 ),
                 React.createElement(
                     "div",
-                    { className: "col-1" },
+                    { className: "col-2 col-sm-1" },
                     React.createElement(Dropdown, { context: "reply", postId: this.props.postId, commentId: this.props.commentId, replyId: this.props.replyId, editToggle: this.editToggle, handleDeleteSubmit: this.props.handleFormSubmit.delete })
                 )
             );

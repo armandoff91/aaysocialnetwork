@@ -56,11 +56,11 @@ class Reply extends React.Component {
 
     render() {
         return <div className="row" commentId={this.props.commentId} replyId={this.props.replyId}>
-            <div className="col-11">
+            <div className="col-10 col-sm-11">
                 <UserName userId={this.props.reply.authorId}/>
                 <ContentBody context="reply" postId={this.props.postId} commentId={this.props.commentId} replyId={this.props.replyId} body={this.props.reply.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.props.handleFormSubmit.edit}/>
             </div>
-            <div className="col-1">
+            <div className="col-2 col-sm-1">
                 <Dropdown context="reply" postId={this.props.postId} commentId={this.props.commentId} replyId={this.props.replyId} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>
             </div>
         </div>

@@ -29,20 +29,6 @@ var Dropdown = function (_React$Component) {
                         "li",
                         null,
                         React.createElement(
-                            "p",
-                            null,
-                            "postId:",
-                            this.props.postId,
-                            ", commentId:",
-                            this.props.commentId,
-                            ", replyId:",
-                            this.props.replyId
-                        )
-                    ),
-                    React.createElement(
-                        "li",
-                        null,
-                        React.createElement(
                             "a",
                             { className: "dropdown-item", onClick: this.props.editToggle },
                             "Edit"
