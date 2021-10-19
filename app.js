@@ -47,6 +47,10 @@ app.get("/", (req, res) => {
     res.render('landing')
 })
 
+app.get("/color", (req, res) => {
+    res.render('color')
+})
+
 app.get("/dev", (req, res) => {
     res.render("dev")
 })

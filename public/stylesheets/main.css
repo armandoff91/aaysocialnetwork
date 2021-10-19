@@ -1,4 +1,4 @@
-div {
+/* div {
     outline: 1px dotted grey
 }
 
@@ -8,4 +8,8 @@ h1 {
 
 p {
     outline: 1px dotted blue
+} */
+
+body {
+    background-color: rgb(231, 231, 231) !important;
 }

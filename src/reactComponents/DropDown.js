@@ -5,7 +5,7 @@ class Dropdown extends React.Component {
 
     render() {
         return <div className="dropdown">
-            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            <a className="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 
             </a>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">

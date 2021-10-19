@@ -11,14 +11,19 @@ class CommentSection extends React.Component {
     render() {
         if (this.props.isCommentToggled) {
             return <div>
+                <hr className="my-0"></hr>
                 <div className="container">
                     <div className="row">
                         <div className="col">
                             <form className="form-inline" onSubmit={this.props.handleFormSubmit.newComment}>
                                 <div className="form-group">
-                                    <input className="form-control" placeholder="Your Comment here..."></input>
+                                    <div className="input-group mb-3">
+                                        <input className="form-control" placeholder="Your Comment here..."></input>
+                                        <div className="input-group-append">
+                                            <button type="submit" className="btn btn-outline-primary">submit</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button type="submit" className="btn">submit</button>
                             </form>
                         </div>
                     </div>
@@ -68,9 +73,7 @@ class Comment extends React.Component {
                 <div className="col-10 col-sm-11">
                     <UserName userId={this.props.comment.authorId}/>
                     <ContentBody context="comment" postId={this.props.postId} commentId={this.props.comment._id} body={this.props.comment.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.props.handleFormSubmit.edit}/>
-                    <button type="button" className="btn">like</button>
-                    <button type="button" className="btn" onClick={this.replyToggle}>reply</button>
-                    <a>{this.props.comment.replies.length}</a>
+                    <button type="button" className="btn btn-sm btn-primary" onClick={this.replyToggle}>reply <span className="badge badge-light">{this.props.comment.replies.length}</span></button>
                 </div>
                 <div className="col-2 col-sm-1">
                     <Dropdown context="comment" postId={this.props.postId} commentId={this.props.comment._id} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>

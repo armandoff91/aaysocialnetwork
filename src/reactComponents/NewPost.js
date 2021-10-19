@@ -28,7 +28,7 @@ class NewPostSection extends React.Component{
     }
 
     render() {
-        return <div className="container">
+        return <div className="container bg-white rounded">
             <div className="row">
                 <div className="col">
                     <h6>New Post</h6>

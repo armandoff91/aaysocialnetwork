@@ -21,7 +21,7 @@ var Dropdown = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "dropdown" },
-                React.createElement("a", { className: "btn btn-secondary dropdown-toggle", href: "#", role: "button", id: "dropdownMenuLink", "data-bs-toggle": "dropdown", "aria-expanded": "false" }),
+                React.createElement("a", { className: "btn btn-outline-secondary dropdown-toggle", href: "#", role: "button", id: "dropdownMenuLink", "data-bs-toggle": "dropdown", "aria-expanded": "false" }),
                 React.createElement(
                     "ul",
                     { className: "dropdown-menu", "aria-labelledby": "dropdownMenuLink" },

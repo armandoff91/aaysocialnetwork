@@ -34,6 +34,7 @@ var CommentSection = function (_React$Component) {
                 return React.createElement(
                     "div",
                     null,
+                    React.createElement("hr", { className: "my-0" }),
                     React.createElement(
                         "div",
                         { className: "container" },
@@ -49,12 +50,20 @@ var CommentSection = function (_React$Component) {
                                     React.createElement(
                                         "div",
                                         { className: "form-group" },
-                                        React.createElement("input", { className: "form-control", placeholder: "Your Comment here..." })
-                                    ),
-                                    React.createElement(
-                                        "button",
-                                        { type: "submit", className: "btn" },
-                                        "submit"
+                                        React.createElement(
+                                            "div",
+                                            { className: "input-group mb-3" },
+                                            React.createElement("input", { className: "form-control", placeholder: "Your Comment here..." }),
+                                            React.createElement(
+                                                "div",
+                                                { className: "input-group-append" },
+                                                React.createElement(
+                                                    "button",
+                                                    { type: "submit", className: "btn btn-outline-primary" },
+                                                    "submit"
+                                                )
+                                            )
+                                        )
                                     )
                                 )
                             )
@@ -125,18 +134,13 @@ var Comment = function (_React$Component2) {
                         React.createElement(ContentBody, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, body: this.props.comment.body, isEditToggled: this.state.isEditToggled, editToggle: this.editToggle, handleEditSubmit: this.props.handleFormSubmit.edit }),
                         React.createElement(
                             "button",
-                            { type: "button", className: "btn" },
-                            "like"
-                        ),
-                        React.createElement(
-                            "button",
-                            { type: "button", className: "btn", onClick: this.replyToggle },
-                            "reply"
-                        ),
-                        React.createElement(
-                            "a",
-                            null,
-                            this.props.comment.replies.length
+                            { type: "button", className: "btn btn-sm btn-primary", onClick: this.replyToggle },
+                            "reply ",
+                            React.createElement(
+                                "span",
+                                { className: "badge badge-light" },
+                                this.props.comment.replies.length
+                            )
                         )
                     ),
                     React.createElement(

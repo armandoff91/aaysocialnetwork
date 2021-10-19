@@ -158,28 +158,27 @@ class Post extends React.Component{
     }
 
     render() {
-        return <div className="container my-5">
+        return <div className="container my-3 rounded bg-white p-2">
             <div className="row">
                 <div className="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" className="img-thumbnail"></img></div>
                 <div className="col-9 col-sm-11">
                     <UserName userId={this.state.post.authorId} />
-                    <p className="small">{this.displayTime(this.state.post.date)}</p>
+                    <div><p className="small">{this.displayTime(this.state.post.date)}</p></div>
                 </div>
             </div>
             <div className="row">
-                <div className="col-10 col-sm-1">
+                <div className="col-10 col-sm-11">
                     <p className="strong">{this.state.post.title}</p>
                     <ContentBody context="post" postId={this.state.post._id} body={this.state.post.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.handleFormSubmit.edit}/>
                 </div>
-                <div className="col-2 col-sm-11">
+                <div className="col-2 col-sm-1">
                     <Dropdown context="post" postId={this.state.post._id} editToggle={this.editToggle} handleDeleteSubmit={this.handleFormSubmit.delete}/>
                 </div>
             </div>
-            <div className="row justify-content-between">
-                <div className="col">
-                    <button type="button" className="btn">likes</button>
-                    <button type="button" className="btn" onClick={this.commentToggle}>Comment</button>
-                    <a>{this.state.post.comments.length}</a>
+            <hr className="my-0"></hr>
+            <div className="row">
+                <div className="col mt-2">
+                    <button type="button" className="btn btn-primary btn-sm" onClick={this.commentToggle}>Comment <span className="badge badge-light">{this.state.post.comments.length}</span></button>
                 </div>
             </div>
             <CommentSection handleFormSubmit={this.handleFormSubmit} isCommentToggled={this.state.isCommentToggled} commentList={this.state.post.comments} postId={this.state.post._id}/>

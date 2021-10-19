@@ -193,7 +193,7 @@ var Post = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "container my-5" },
+                { className: "container my-3 rounded bg-white p-2" },
                 React.createElement(
                     "div",
                     { className: "row" },
@@ -207,9 +207,13 @@ var Post = function (_React$Component) {
                         { className: "col-9 col-sm-11" },
                         React.createElement(UserName, { userId: this.state.post.authorId }),
                         React.createElement(
-                            "p",
-                            { className: "small" },
-                            this.displayTime(this.state.post.date)
+                            "div",
+                            null,
+                            React.createElement(
+                                "p",
+                                { className: "small" },
+                                this.displayTime(this.state.post.date)
+                            )
                         )
                     )
                 ),
@@ -218,7 +222,7 @@ var Post = function (_React$Component) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-10 col-sm-1" },
+                        { className: "col-10 col-sm-11" },
                         React.createElement(
                             "p",
                             { className: "strong" },
@@ -228,30 +232,26 @@ var Post = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "col-2 col-sm-11" },
+                        { className: "col-2 col-sm-1" },
                         React.createElement(Dropdown, { context: "post", postId: this.state.post._id, editToggle: this.editToggle, handleDeleteSubmit: this.handleFormSubmit.delete })
                     )
                 ),
+                React.createElement("hr", { className: "my-0" }),
                 React.createElement(
                     "div",
-                    { className: "row justify-content-between" },
+                    { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col" },
+                        { className: "col mt-2" },
                         React.createElement(
                             "button",
-                            { type: "button", className: "btn" },
-                            "likes"
-                        ),
-                        React.createElement(
-                            "button",
-                            { type: "button", className: "btn", onClick: this.commentToggle },
-                            "Comment"
-                        ),
-                        React.createElement(
-                            "a",
-                            null,
-                            this.state.post.comments.length
+                            { type: "button", className: "btn btn-primary btn-sm", onClick: this.commentToggle },
+                            "Comment ",
+                            React.createElement(
+                                "span",
+                                { className: "badge badge-light" },
+                                this.state.post.comments.length
+                            )
                         )
                     )
                 ),

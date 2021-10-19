@@ -48,7 +48,7 @@ class UserName extends React.Component {
     }
 
     render() {
-        return <p className="strong">{this.state.username}</p>
+        return <div className="strong">{this.state.username}</div>
     }
 }
 

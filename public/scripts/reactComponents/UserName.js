@@ -70,7 +70,7 @@ var UserName = function (_React$Component) {
         key: 'render',
         value: function render() {
             return React.createElement(
-                'p',
+                'div',
                 { className: 'strong' },
                 this.state.username
             );
