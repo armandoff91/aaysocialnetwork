@@ -11,23 +11,20 @@ class ReplySection extends React.Component {
     render() {
         if (this.props.isReplyToggled) {
             return <div>
-                <div className="container">
-                    <div className="row">
-                        <div className="col">
-                            <form className="form-inline" onSubmit={this.props.handleFormSubmit.newReply} commentId={this.props.commentId}>
-                                <div className="form-group">
-                                    <input className="form-control" placeholder="Your Reply here..."></input>
-                                </div>
-                                <button type="submit" className="btn">submit</button>
-                            </form>
+                {this.replyList()}
+                <form className="form-inline" onSubmit={this.props.handleFormSubmit.newReply} commentId={this.props.commentId}>
+                    <div className="form-group-sm">
+                        <div className="input-group">
+                            <input className="form-control" placeholder="Your Reply here..."></input>
+                            <div className="input-group-append">
+                                <button type="submit" className="btn btn-outline-primary">submit</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {this.replyList()}
+                </form>
             </div>
         }
-        return <div>
-        </div>
+        return <div></div>
     }
 }
 

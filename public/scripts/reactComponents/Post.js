@@ -193,7 +193,7 @@ var Post = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "container my-3 rounded bg-white p-2" },
+                { className: "container rounded bg-white my-3 p-2" },
                 React.createElement(
                     "div",
                     { className: "row" },

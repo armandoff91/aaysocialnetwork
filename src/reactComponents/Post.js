@@ -158,7 +158,7 @@ class Post extends React.Component{
     }
 
     render() {
-        return <div className="container my-3 rounded bg-white p-2">
+        return <div className="container rounded bg-white my-3 p-2">
             <div className="row">
                 <div className="col-3 col-sm-1 h-100"><img src="images/portrait_2.png" className="img-thumbnail"></img></div>
                 <div className="col-9 col-sm-11">

@@ -51,5 +51,3 @@ class UserName extends React.Component {
         return <div className="strong">{this.state.username}</div>
     }
 }
-
-console.log("react USerName loaded")

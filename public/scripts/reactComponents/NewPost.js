@@ -15,24 +15,51 @@ var NewPostSection = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (NewPostSection.__proto__ || Object.getPrototypeOf(NewPostSection)).call(this, props));
 
         _this.submitNewPost = _this.submitNewPost.bind(_this);
+        _this.bodyInput = _this.bodyInput.bind(_this);
+        _this.state = {
+            bodyInput: ""
+        };
         return _this;
     }
 
     _createClass(NewPostSection, [{
-        key: "submitNewPost",
-        value: function submitNewPost(event) {
+        key: "onInput",
+        value: function onInput(event, callback) {
+            var value = event.target.value;
+            callback(value);
+        }
+    }, {
+        key: "bodyInput",
+        value: function bodyInput() {
+            var _this2 = this;
+
+            this.onInput(event, function (input) {
+                _this2.setState({
+                    bodyInput: input,
+                    isSubmitEnabled: input.length > 0 ? true : false
+                });
+            });
+        }
+    }, {
+        key: "onSubmit",
+        value: function onSubmit(event, callback) {
             event.preventDefault();
             var XHR = new XMLHttpRequest();
             var formData = new FormData();
 
-            formData.append("title", event.target.querySelector("#newPostTitle").value);
-            formData.append("body", event.target.querySelector("#newPostBody").value);
+            formData.append("body", this.state.bodyInput);
 
             XHR.addEventListener('load', function (e) {
                 var post = document.createElement("div");
                 post.setAttribute("id", JSON.parse(XHR.response)._id);
                 document.querySelector("#pinnedPostBoard").appendChild(post);
-                ReactDOM.render(React.createElement(Post, { postId: JSON.parse(XHR.response)._id }), document.getElementById("" + JSON.parse(XHR.response)._id));
+                if (Object.keys(JSON.parse(XHR.response)).includes("_id")) {
+                    ReactDOM.render(React.createElement(Post, { postId: JSON.parse(XHR.response)._id }), document.getElementById("" + JSON.parse(XHR.response)._id));
+                    event.target.querySelector("#newPostBody").value = "";
+                    callback();
+                } else {
+                    alert(JSON.parse(XHR.response).msg);
+                }
             });
 
             XHR.addEventListener('error', function (e) {
@@ -43,11 +70,22 @@ var NewPostSection = function (_React$Component) {
             XHR.send(formData);
         }
     }, {
+        key: "submitNewPost",
+        value: function submitNewPost() {
+            var _this3 = this;
+
+            this.onSubmit(event, function () {
+                _this3.setState({
+                    bodyInput: ""
+                });
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "container bg-white rounded" },
+                { className: "container bg-white rounded my-3 p-2" },
                 React.createElement(
                     "div",
                     { className: "row" },
@@ -55,23 +93,21 @@ var NewPostSection = function (_React$Component) {
                         "div",
                         { className: "col" },
                         React.createElement(
-                            "h6",
-                            null,
-                            "New Post"
-                        ),
-                        React.createElement(
                             "form",
                             { className: "form-inline", onSubmit: this.submitNewPost },
                             React.createElement(
                                 "div",
                                 { className: "form-group" },
-                                React.createElement("input", { className: "form-control", placeholder: "Title", id: "newPostTitle" }),
-                                React.createElement("input", { className: "form-control", placeholder: "What's on your mind?", id: "newPostBody" })
+                                React.createElement("textarea", { className: "form-control", placeholder: "What's on your mind?", id: "newPostBody", onInput: this.bodyInput })
                             ),
-                            React.createElement(
+                            this.state.isSubmitEnabled ? React.createElement(
                                 "button",
-                                { type: "submit", className: "btn" },
-                                "submit"
+                                { type: "submit", className: "btn btn-primary btn-sm mt-2" },
+                                "Post"
+                            ) : React.createElement(
+                                "button",
+                                { type: "submit", className: "btn btn-primary btn-sm mt-2", disabled: true },
+                                "Post"
                             )
                         )
                     )

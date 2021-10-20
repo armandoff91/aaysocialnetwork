@@ -1,5 +1,3 @@
-console.log("home.js loaded");
-
 var pinnedPostList = [];
 var postList = [];
 var userList = {};
@@ -25,7 +23,6 @@ var loadPost = function loadPost(startingPosition, numberOfPosts) {
 };
 
 window.addEventListener('DOMContentLoaded', function (event) {
-    console.log('DOM fully loaded and parsed');
 
     ReactDOM.render(React.createElement(NewPostSection, null), document.querySelector("#newPostSection"));
 

@@ -53,7 +53,6 @@ class Cache {
     }
 
     isAuthorized(requestUserId, objectAuthorId) {
-        console.log("id1: " + requestUserId, "id2: " + objectAuthorId)
         return requestUserId === objectAuthorId
     }
 
@@ -124,12 +123,9 @@ class Cache {
     }
 
     findOne(postId, callback) {
-        console.log("findOne called")
         if (this.isInCache(postId)) {
-            console.log (`${postId} found in cache, sending to router...`)
             callback(1, this.body[postId])
         } else {
-            console.log(`${postId} not in cache, retriving from db...`)
             queryPost({filter: {_id: postId}}, (numberOfPosts, posts) => {
                 this.pushMany(posts)
                 callback(numberOfPosts, this.body[postId])

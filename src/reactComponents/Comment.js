@@ -68,12 +68,15 @@ class Comment extends React.Component {
     }
 
     render() {
-        return <div className="container" commentid={this.props.comment._id}>
+        return <div className="container bg-light rounded my-3 p-2" commentid={this.props.comment._id}>
             <div className="row">
                 <div className="col-10 col-sm-11">
                     <UserName userId={this.props.comment.authorId}/>
                     <ContentBody context="comment" postId={this.props.postId} commentId={this.props.comment._id} body={this.props.comment.body} isEditToggled={this.state.isEditToggled} editToggle={this.editToggle} handleEditSubmit={this.props.handleFormSubmit.edit}/>
-                    <button type="button" className="btn btn-sm btn-primary" onClick={this.replyToggle}>reply <span className="badge badge-light">{this.props.comment.replies.length}</span></button>
+                    <div>
+                        <span> </span>
+                        <a className="a-sm" onClick={this.replyToggle}>reply: {this.props.comment.replies.length}</a>
+                    </div>
                 </div>
                 <div className="col-2 col-sm-1">
                     <Dropdown context="comment" postId={this.props.postId} commentId={this.props.comment._id} editToggle={this.editToggle} handleDeleteSubmit={this.props.handleFormSubmit.delete}/>

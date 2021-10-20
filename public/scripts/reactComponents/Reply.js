@@ -34,33 +34,29 @@ var ReplySection = function (_React$Component) {
                 return React.createElement(
                     "div",
                     null,
+                    this.replyList(),
                     React.createElement(
-                        "div",
-                        { className: "container" },
+                        "form",
+                        { className: "form-inline", onSubmit: this.props.handleFormSubmit.newReply, commentId: this.props.commentId },
                         React.createElement(
                             "div",
-                            { className: "row" },
+                            { className: "form-group-sm" },
                             React.createElement(
                                 "div",
-                                { className: "col" },
+                                { className: "input-group" },
+                                React.createElement("input", { className: "form-control", placeholder: "Your Reply here..." }),
                                 React.createElement(
-                                    "form",
-                                    { className: "form-inline", onSubmit: this.props.handleFormSubmit.newReply, commentId: this.props.commentId },
-                                    React.createElement(
-                                        "div",
-                                        { className: "form-group" },
-                                        React.createElement("input", { className: "form-control", placeholder: "Your Reply here..." })
-                                    ),
+                                    "div",
+                                    { className: "input-group-append" },
                                     React.createElement(
                                         "button",
-                                        { type: "submit", className: "btn" },
+                                        { type: "submit", className: "btn btn-outline-primary" },
                                         "submit"
                                     )
                                 )
                             )
                         )
-                    ),
-                    this.replyList()
+                    )
                 );
             }
             return React.createElement("div", null);

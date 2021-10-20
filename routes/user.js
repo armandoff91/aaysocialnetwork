@@ -9,7 +9,6 @@ userCache.init()
 router
     .route("/")
     .get((req, res) => {
-        console.log(req.query)
         userCache.findOne(req.query.userId, (numberOfUsers, user) => {
             if (numberOfUsers === 1) {
                 const result = {

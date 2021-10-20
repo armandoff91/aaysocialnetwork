@@ -22,6 +22,6 @@ class ContentBody extends React.Component {
                 <button type="submit" className="btn btn-primary mb-2">Submit</button>
             </form> 
         }
-        return <p>{this.state.body}</p>
+        return <span>{this.state.body}</span>
     }
 }

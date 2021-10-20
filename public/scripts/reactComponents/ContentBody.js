@@ -54,7 +54,7 @@ var ContentBody = function (_React$Component) {
                 );
             }
             return React.createElement(
-                "p",
+                "span",
                 null,
                 this.state.body
             );

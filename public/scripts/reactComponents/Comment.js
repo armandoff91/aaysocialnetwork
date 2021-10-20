@@ -123,7 +123,7 @@ var Comment = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "container", commentid: this.props.comment._id },
+                { className: "container bg-light rounded my-3 p-2", commentid: this.props.comment._id },
                 React.createElement(
                     "div",
                     { className: "row" },
@@ -133,12 +133,17 @@ var Comment = function (_React$Component2) {
                         React.createElement(UserName, { userId: this.props.comment.authorId }),
                         React.createElement(ContentBody, { context: "comment", postId: this.props.postId, commentId: this.props.comment._id, body: this.props.comment.body, isEditToggled: this.state.isEditToggled, editToggle: this.editToggle, handleEditSubmit: this.props.handleFormSubmit.edit }),
                         React.createElement(
-                            "button",
-                            { type: "button", className: "btn btn-sm btn-primary", onClick: this.replyToggle },
-                            "reply ",
+                            "div",
+                            null,
                             React.createElement(
                                 "span",
-                                { className: "badge badge-light" },
+                                null,
+                                " "
+                            ),
+                            React.createElement(
+                                "a",
+                                { className: "a-sm", onClick: this.replyToggle },
+                                "reply: ",
                                 this.props.comment.replies.length
                             )
                         )

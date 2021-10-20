@@ -39,12 +39,9 @@ class UserCache {
 
 
     findOne(userId, callback) {
-        console.log("findOne user called")
         if (this.isInCache(userId)) {
-            console.log (`${userId} found in cache, sending to router...`)
             callback(1, this.body[userId])
         } else {
-            console.log(`${userId} not in cache, retriving from db...`)
             queryUser({filter: {_id: userId}}, (numberOfUsers, users) => {
                 this.pushMany(users)
                 callback(numberOfUsers, this.body[userId])

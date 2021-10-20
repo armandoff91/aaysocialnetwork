@@ -10,7 +10,6 @@ cache.updateCycle()
 router
     .route("/")
     .get((req, res) => {
-        console.log(req.query)
         cache.findOne(req.query.postId, (numberOfPosts, post) => {
             if (numberOfPosts === 1) {
                 res.json(post)
@@ -32,6 +31,7 @@ router
     .post((req, res) => {
         console.log("new post request received")
         if (req.body.body.length > 0) {
+            console.log(req.body.body, typeof req.body.body)
             const newPost =  {
                 authorId: req.user,
                 title: req.body.title,
@@ -41,6 +41,8 @@ router
                 console.log("new post saved")
                 res.send(JSON.stringify(savedPost))
             })
+        } else {
+            res.json({msg: "Error: Could not save an empty post."})
         }
 })
 

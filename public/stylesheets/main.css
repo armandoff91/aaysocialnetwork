@@ -13,3 +13,8 @@ p {
 body {
     background-color: rgb(231, 231, 231) !important;
 }
+
+.a-sm{
+    font-size: 12px;
+    font-weight: bold;
+}

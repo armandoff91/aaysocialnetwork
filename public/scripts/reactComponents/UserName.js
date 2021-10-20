@@ -79,5 +79,3 @@ var UserName = function (_React$Component) {
 
     return UserName;
 }(React.Component);
-
-console.log("react USerName loaded");
