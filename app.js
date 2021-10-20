@@ -7,6 +7,7 @@ const auth = require("./routes/auth")
 const home = require("./routes/home")
 const user = require("./routes/user")
 const posts = require("./routes/posts")
+const profile = require("./routes/profile")
 const connect = require("./dbServices/connect")
 const passport = require("passport")
 
@@ -68,7 +69,7 @@ app.use("/", (req, res, next) => {
 app.use("/home", home);
 app.use("/user", user);
 app.use("/posts", posts);
-
+app.use("/profile", profile)
 
 
 

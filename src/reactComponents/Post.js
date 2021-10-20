@@ -96,10 +96,14 @@ class Post extends React.Component{
             this.postRequest("newComment", {
                 postId: this.props.postId,
                 body: event.target.querySelector("input").value
-            }, (post) => {
-                this.setState({
-                    post: post
-                })
+            }, (res) => {
+                if (Object.keys(res).includes("_id")) {
+                    this.setState({
+                        post: res
+                    })
+                } else {
+                    alert(res.msg)
+                }
             })
         },
 
@@ -109,10 +113,14 @@ class Post extends React.Component{
                 postId: this.props.postId,
                 commentId: event.target.getAttribute("commentid"),
                 body: event.target.querySelector("input").value
-            }, (post) => {
-                this.setState({
-                    post: post
-                })
+            }, (res) => {
+                if (Object.keys(res).includes("_id")) {
+                    this.setState({
+                        post: res
+                    })
+                } else {
+                    alert(res.msg)
+                }
             })
         },
 
@@ -123,11 +131,15 @@ class Post extends React.Component{
                 commentId: event.target.getAttribute("commentid"),
                 replyId: event.target.getAttribute("replyid"),
                 body: event.target.querySelector("input").value
-            }, (post) => {
-                this.setState({
-                    post: post,
-                    isEditToggled: false
-                })
+            }, (res) => {
+                if (Object.keys(res).includes("_id")) {
+                    this.setState({
+                        post: res,
+                        isEditToggled: false
+                    })
+                } else {
+                    alert(res.msg)
+                }
             })
         },
 

@@ -7,6 +7,7 @@ var cache = new Cache()
 cache.init()
 cache.updateCycle()
 
+
 router
     .route("/")
     .get((req, res) => {
@@ -31,7 +32,6 @@ router
     .post((req, res) => {
         console.log("new post request received")
         if (req.body.body.length > 0) {
-            console.log(req.body.body, typeof req.body.body)
             const newPost =  {
                 authorId: req.user,
                 title: req.body.title,
@@ -50,30 +50,38 @@ router
     .route("/newComment")
     .post((req, res) => {
         console.log("new comment request received")
-        const newComment =  {
-            authorId: req.user,
-            postId: req.body.postId,
-            body: req.body.body
-        }           
-        cache.createComment(newComment,(updatedPost) => {
-            res.send(JSON.stringify(updatedPost))
-        })
+        if (req.body.body.length > 0) {    
+            const newComment =  {
+                authorId: req.user,
+                postId: req.body.postId,
+                body: req.body.body
+            }           
+            cache.createComment(newComment,(updatedPost) => {
+                res.send(JSON.stringify(updatedPost))
+            })
+        } else {
+            res.json({msg: "Could not save an empty comment."})
+        }
 })
 
 router
     .route("/newReply")
     .post((req, res) => {
         console.log("new reply request received")
-        const newReply = {
-            authorId: req.user,
-            postId: req.body.postId,
-            commentId: req.body.commentId,
-            body: req.body.body
+        if (req.body.body.length > 0) {
+            const newReply = {
+                authorId: req.user,
+                postId: req.body.postId,
+                commentId: req.body.commentId,
+                body: req.body.body
+            }
+            cache.createReply(newReply, (updatedPost) => {
+                console.log("new reply saved")
+                res.send(JSON.stringify(updatedPost))
+            })
+        } else {
+            res.json({msg: "Could not save an empty reply."})
         }
-        cache.createReply(newReply, (updatedPost) => {
-            console.log("new reply saved")
-            res.send(JSON.stringify(updatedPost))
-        })
     })
 
 router

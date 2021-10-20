@@ -22,10 +22,14 @@ var Post = function (_React$Component) {
                 this.postRequest("newComment", {
                     postId: this.props.postId,
                     body: event.target.querySelector("input").value
-                }, function (post) {
-                    _this2.setState({
-                        post: post
-                    });
+                }, function (res) {
+                    if (Object.keys(res).includes("_id")) {
+                        _this2.setState({
+                            post: res
+                        });
+                    } else {
+                        alert(res.msg);
+                    }
                 });
             },
 
@@ -37,10 +41,14 @@ var Post = function (_React$Component) {
                     postId: this.props.postId,
                     commentId: event.target.getAttribute("commentid"),
                     body: event.target.querySelector("input").value
-                }, function (post) {
-                    _this3.setState({
-                        post: post
-                    });
+                }, function (res) {
+                    if (Object.keys(res).includes("_id")) {
+                        _this3.setState({
+                            post: res
+                        });
+                    } else {
+                        alert(res.msg);
+                    }
                 });
             },
 
@@ -53,11 +61,15 @@ var Post = function (_React$Component) {
                     commentId: event.target.getAttribute("commentid"),
                     replyId: event.target.getAttribute("replyid"),
                     body: event.target.querySelector("input").value
-                }, function (post) {
-                    _this4.setState({
-                        post: post,
-                        isEditToggled: false
-                    });
+                }, function (res) {
+                    if (Object.keys(res).includes("_id")) {
+                        _this4.setState({
+                            post: res,
+                            isEditToggled: false
+                        });
+                    } else {
+                        alert(res.msg);
+                    }
                 });
             },
 
