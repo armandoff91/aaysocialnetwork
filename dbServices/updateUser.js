@@ -1,8 +1,4 @@
-const mongoose = require("mongoose")
-const schemas = require("./schemas/schemas")
 const queryUser = require("./queryUser")
-
-const User = mongoose.model("User", schemas.userSchema)
 
 function updateUser(userId, update, callback) {
     queryUser({filter: {_id: userId}}, (numberOfUsers, users) => {
