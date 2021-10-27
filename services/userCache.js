@@ -3,7 +3,6 @@ const mongoose = require("mongoose")
 const queryUser = require("../dbServices/queryUser")
 var updateUser = require("../dbServices/updateUser")
 const schemas = require("../dbServices/schemas/schemas")
-const User = mongoose.model("User", schemas.userSchema)
 
 const bcrypt = require("bcrypt")
 
