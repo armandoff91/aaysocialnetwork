@@ -3,28 +3,61 @@ const axios = require('axios').default;
 require("dotenv").config()
 axios.defaults.withCredentials = true
 
+const config = {
+    method: 'post',
+    url: url + "auth/login",
+    data: {
+        username: process.env.TEST_USERNAME,
+        password: process.env.TEST_PASSWORD
+    }
+}
+const postId = "617a8aca465bb62aa05e7ed4"
+
 describe("GET: posts", () => {
-    test("no query", () => {
-        const config = {
-            method: 'post',
-            url: url + "auth/login",
-            data: {
-                username: process.env.TEST_USERNAME,
-                password: process.env.TEST_PASSWORD
+    test("no query", async () => {
+        const cookie = await axios(config)
+        .then(response => {
+            return response.headers['set-cookie']
+        }).catch(err => {
+            console.log(err)
+        })
+        return axios.get(url + "posts", {
+            headers: {
+                Cookie: cookie
             }
-        }
-        return axios(config)
-            .then((response) => {
-                expect(response.status).toBe(200)
-                expect(response.data).toStrictEqual({msg: "login success"})
-                return axios({
-                    method: 'get',
-                    url: url + "posts/",
-                    withCredentials: true
-                })
-            }).then((response) => {
-                expect(response.status).toBe(200)
-                expect(response.data).toStrictEqual({msg: "no post found"})
-            })
+        })
+        .then(response => {
+            expect(response.status).toBe(200)
+            expect(response.data).toStrictEqual({msg: "no post found"})
+        })
     })
+
+    test("with valid postId", async () => {
+        const cookie = await axios(config)
+        .then(response => {
+            return response.headers['set-cookie']
+        })
+        return axios.get(url + "posts/?postId=" + postId, {
+            headers: {Cookie: cookie}
+        }).then(response => {
+            expect(response.status).toBe(200)
+            expect(response.data).toHaveProperty("_id", postId)
+            expect(response.data).toHaveProperty("body", "test post body")
+        })
+    })
+
+    test("with invalid postId(correct length)", async () => {
+        const cookie = await axios(config)
+        .then(response => {
+            return response.headers['set-cookie']
+        })
+        return axios.get(url + "posts/?postId=617a8aca465bb62aa05e7ed2", {
+            headers: {Cookie: cookie}
+        }).then(response => {
+            expect(response.status).toBe(200)
+            expect(response.data).toHaveProperty("msg", "no post found")
+        })
+    })
+
+    // write one with incorrect length
 })
