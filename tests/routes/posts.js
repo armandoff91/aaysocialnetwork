@@ -16,13 +16,17 @@ async function getPosts() {
     const cookie = await axios(config)
     .then(response => {
         return response.headers['set-cookie']
+    }).catch(err => {
+        console.log(err)
     })
-    axios.get(url + "posts/?postId=" + postId, {
+    axios.get(url + "posts/", {
         headers: {
             Cookie: cookie
         }
     }).then(response => {
         console.log(response.status, response.data)
+    }).catch(err => {
+        console.log(err.response.status)
     })
 }
 
