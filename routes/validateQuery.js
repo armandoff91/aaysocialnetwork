@@ -11,7 +11,7 @@ router.use("/", (req, res, next) => {
     }
 
     if (Object.keys(req.query).length === 0) {next(); return}
-    res.status(403).json({msg: "forbidden"})
+    res.status(403).json({msg: "403 Forbidden"})
 })
 
 module.exports = router
