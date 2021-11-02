@@ -43,6 +43,7 @@ app.use(express.static("public"))
 
 app.use(flash())
 
+
 app.get("/", (req, res) => {
     res.render('landing')
 })

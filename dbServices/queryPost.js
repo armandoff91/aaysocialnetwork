@@ -11,6 +11,7 @@ function queryPost(req, callback) {
     })
     .catch((err) => {
         console.log(err)
+        callback(0)
     })
 }
 

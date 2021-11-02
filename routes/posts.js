@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router()
 const Cache = require("../services/postCache")
-
+const validateQuery = require("./validateQuery")
+const validateFormData = require("./validateFormData")
 var cache = new Cache()
 
 cache.init()
 cache.updateCycle()
+
+router.use("/", validateQuery)
 
 
 router
@@ -26,6 +29,7 @@ router
         res.json({postList: cache.getPostList()})
 })
 
+router.use("/", validateFormData)
 
 router
     .route("/newPost")

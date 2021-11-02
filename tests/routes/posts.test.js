@@ -59,5 +59,16 @@ describe("GET: posts", () => {
         })
     })
 
-    // write one with incorrect length
+    test("with invalid postId(incorrect length)", async () => {
+        const cookie = await axios(config)
+        .then(response => {
+            return response.headers['set-cookie']
+        })
+        return axios.get(url + "posts/?postId=1233123", {
+            headers: {Cookie: cookie}
+        }).catch(err => {
+            expect(err).toBeDefined()
+            expect(err.response.status).toBe(403)
+        })
+    })
 })
