@@ -3,7 +3,7 @@ const axios = require('axios').default;
 require("dotenv").config()
 axios.defaults.withCredentials = true
 
-const config = {
+const authConfig = {
     method: 'post',
     url: url + "auth/login",
     data: {
@@ -15,7 +15,7 @@ const postId = "617a8aca465bb62aa05e7ed4"
 
 describe("GET: posts", () => {
     test("no query", async () => {
-        const cookie = await axios(config)
+        const cookie = await axios(authConfig)
         .then(response => {
             return response.headers['set-cookie']
         }).catch(err => {
@@ -33,7 +33,7 @@ describe("GET: posts", () => {
     })
 
     test("with valid postId", async () => {
-        const cookie = await axios(config)
+        const cookie = await axios(authConfig)
         .then(response => {
             return response.headers['set-cookie']
         })
@@ -47,7 +47,7 @@ describe("GET: posts", () => {
     })
 
     test("with invalid postId(correct length)", async () => {
-        const cookie = await axios(config)
+        const cookie = await axios(authConfig)
         .then(response => {
             return response.headers['set-cookie']
         })
@@ -60,7 +60,7 @@ describe("GET: posts", () => {
     })
 
     test("with invalid postId(incorrect length)", async () => {
-        const cookie = await axios(config)
+        const cookie = await axios(authConfig)
         .then(response => {
             return response.headers['set-cookie']
         })

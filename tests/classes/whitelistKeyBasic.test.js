@@ -20,7 +20,7 @@ test("WhitelistKey contain generalRequirement", () => {
 
 test("WhitelistKey contain routeSpecficRequirement", () => {
     var sampleKey = new WhitelistKey("sampleKey")
-    expect(sampleKey).toHaveProperty("routeSpecficRequirement", [])
+    expect(sampleKey).toHaveProperty("routeSpecficRequirement", {})
 })
 
 test("validateGeneralRequirement: empty Req", () => {
@@ -36,4 +36,14 @@ test("validateRouteSpecificRequirement: empty Req", () => {
 test("validate(): empty Req", () => {
     var sampleKey = new WhitelistKey("sampleKey")
     expect(sampleKey.validate()).toBe(true)
+})
+
+test("getGeneralRequirement: 1 requirement", () => {
+    const sampleData = {
+        sampleKey: "abcdef"
+    }
+    var sampleKey = new WhitelistKey("sampleKey", sampleData)
+    sampleKey.addGeneralRequirement("value", "equal to", "abc")
+    sampleKey.addGeneralTypeRequirement("string")
+    expect(sampleKey.getGeneralRequirement()).toStrictEqual(["value equal to abc", "typeof sampleKey equal to string"])
 })
