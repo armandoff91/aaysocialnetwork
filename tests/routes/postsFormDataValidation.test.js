@@ -13,21 +13,38 @@ const authConfig = {
 }
 
 describe("POST: posts/ ", () => {
-    test("newPost", async () => {
-        const cookie = await axios(authConfig)
+    test("newPost: reject invalid form data key", async () => {
+        // const cookie = await axios(authConfig)
+        // .then(response => {
+        //     return response.headers['set-cookie']
+        // }).catch(err => {
+        //     console.log(err)
+        // })
+        return axios(authConfig)
         .then(response => {
-            return response.headers['set-cookie']
-        }).catch(err => {
-            console.log(err)
+            response.headers['set-cookie']
         })
-        return axios.get(url + "posts", {
-            headers: {
-                Cookie: cookie
-            }
-        })
-        .then(response => {
-            expect(response.status).toBe(200)
-            expect(response.data).toStrictEqual({msg: "no post found"})
+        .then(cookie => {
+            return axios.post(url + "posts/newPost", {
+                headers: {
+                    Cookie: cookie
+                },
+                data: {
+                    invalidKey1: "value"
+                }
+            })
+            .then(res => {
+                expect(res.data).toStrictEqual({ msg: 'please login.'})
+                return res
+            })
+            .catch(err => {
+                console.log(err)
+                expect(err).toBeDefined()
+                expect(err.response.status).toBe(403)
+            })
+            .finally(whatever => {
+                console.log(whatever)
+            })
         })
     })
 })

@@ -45,6 +45,7 @@ app.use(flash())
 
 
 app.get("/", (req, res) => {
+    console.log("someone landed")
     res.render('landing')
 })
 
