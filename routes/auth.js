@@ -11,7 +11,6 @@ const User = mongoose.model("User", userSchema)
 
 passport.use(new LocalStrategy(
     function (username, password, done) {
-        // done() is a callback
         User.findOne({username : username}, (error, user) => {
             if (error) {return done(error)}
             if (!user) {
